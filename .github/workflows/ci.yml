@@ -29,6 +29,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Verify Solver Standalone Self-Test
+        env:
+          PYTHONPATH: .
+        run: |
+          python backend/core/solver.py
+
       - name: Run Pytest Test Suite
         env:
           PYTHONPATH: .
@@ -47,4 +53,24 @@ jobs:
           assert res.status_code == 200, f'Health check failed: {res.text}'
           assert res.json()['status'] == 'ok'
           print('Health check passed:', res.json())
+          "
+
+      - name: Verify Default Scenario API Endpoint
+        env:
+          PYTHONPATH: .
+        run: |
+          python -c "
+          from fastapi.testclient import TestClient
+          from backend.main import app
+          client = TestClient(app)
+          res = client.get('/api/v1/default-scenario')
+          assert res.status_code == 200, f'Default scenario endpoint failed: {res.text}'
+          data = res.json()
+          assert data['status'] in ('OPTIMAL', 'FEASIBLE')
+          assert data['constraint_audit']['mass_balance_passed'] is True
+          assert data['constraint_audit']['capacity_limits_passed'] is True
+          assert data['constraint_audit']['shelf_life_limits_passed'] is True
+          assert data['constraint_audit']['demand_caps_passed'] is True
+          assert data['kpis']['optimized']['net_revenue'] > data['kpis']['baseline']['net_revenue']
+          print(f'Default scenario verified: {data[\"status\"]}, Solve Time: {data[\"solve_time_ms\"]} ms')
           "

@@ -3,7 +3,8 @@ FreshRoute OS Core Schemas (Pydantic v2)
 Adheres 100% to SHARED_API_CONTRACT.md specification.
 """
 
-from typing import Dict, List, Literal, Optional
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 # 2.1 Origin Packinghouse Coordinates
@@ -14,15 +15,33 @@ ORIGIN_HUB = {
     "lng": 78.1291,
 }
 
-# 2.2 Discrete Discount Tiers
+# 2.2 Discrete Discount Tiers (Mandatory MVP: Discount Recommendations)
 DISCOUNT_TIERS = [
-    {"tier": 0, "discount_pct": 0, "discount_rate": 0.00, "demand_expansion": 1.00},
-    {"tier": 1, "discount_pct": 15, "discount_rate": 0.15, "demand_expansion": 0.25},
-    {"tier": 2, "discount_pct": 30, "discount_rate": 0.30, "demand_expansion": 0.35},
+    {
+        "tier_id": 0,
+        "tier": 0,
+        "discount_pct": 0,
+        "discount_rate": 0.00,
+        "demand_expansion": 1.00,
+    },
+    {
+        "tier_id": 1,
+        "tier": 1,
+        "discount_pct": 15,
+        "discount_rate": 0.15,
+        "demand_expansion": 0.25,
+    },
+    {
+        "tier_id": 2,
+        "tier": 2,
+        "discount_pct": 30,
+        "discount_rate": 0.30,
+        "demand_expansion": 0.35,
+    },  # Eligible ONLY when batch.rsl_hours <= 36.0
 ]
 
 # 2.4 Default Commodity Cold-Chain Lookup (For Missing Data Imputation)
-DEFAULT_COMMODITY_LOOKUP: Dict[str, Dict[str, float]] = {
+DEFAULT_COMMODITY_LOOKUP: dict[str, dict[str, float]] = {
     "Tomato": {"optimal_temp_c": 12.0, "spoilage_cost_per_kg": 14.0, "base_cost_per_kg": 18.0},
     "Guava": {"optimal_temp_c": 10.0, "spoilage_cost_per_kg": 18.0, "base_cost_per_kg": 25.0},
     "Banana": {"optimal_temp_c": 13.0, "spoilage_cost_per_kg": 12.0, "base_cost_per_kg": 15.0},
@@ -57,8 +76,8 @@ class Market(BaseModel):
     handling_hours: float = Field(default=3.0, ge=0.0, description="Unloading and mandi handling hours")
     handling_cost_per_kg: float = Field(default=1.5, ge=0.0, description="Loading/unloading cost per kg")
     max_capacity_kg: float = Field(..., ge=0.0, description="Maximum route transport capacity in kg")
-    demand_kg: Dict[str, float] = Field(..., description="Base demand per commodity in kg")
-    market_price_kg: Dict[str, float] = Field(..., description="Full wholesale selling price per commodity in INR/kg")
+    demand_kg: dict[str, float] = Field(..., description="Base demand per commodity in kg")
+    market_price_kg: dict[str, float] = Field(..., description="Full wholesale selling price per commodity in INR/kg")
 
 
 class DisruptionOverrides(BaseModel):
@@ -127,20 +146,20 @@ class MonteCarloRun(BaseModel):
 
 
 class OptimizeRequest(BaseModel):
-    batches: List[Batch]
-    markets: List[Market]
+    batches: list[Batch]
+    markets: list[Market]
     disruptions: DisruptionOverrides = Field(default_factory=DisruptionOverrides)
 
 
 class OptimizeResponse(BaseModel):
     status: Literal["OPTIMAL", "FEASIBLE", "FALLBACK_HEURISTIC"] = "OPTIMAL"
     solve_time_ms: float
-    batches: List[Batch]
-    markets: List[Market]
+    batches: list[Batch]
+    markets: list[Market]
     disruptions: DisruptionOverrides
     constraint_audit: ConstraintAudit
     kpis: KpiComparisonBundle
-    allocations: List[AllocationRow]
-    baseline_allocations: List[AllocationRow]
-    monte_carlo_summary: List[MonteCarloRun]
-    ingestion_warnings: List[str] = Field(default_factory=list)
+    allocations: list[AllocationRow]
+    baseline_allocations: list[AllocationRow]
+    monte_carlo_summary: list[MonteCarloRun]
+    ingestion_warnings: list[str] = Field(default_factory=list)
