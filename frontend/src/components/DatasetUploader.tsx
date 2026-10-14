@@ -7,12 +7,8 @@ import {
   FileCheck,
   AlertTriangle,
   X,
-  CheckCircle2,
   Cpu,
   Layers,
-  Sparkles,
-  Info,
-  Download,
   RotateCcw,
 } from 'lucide-react';
 

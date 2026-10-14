@@ -565,3 +565,74 @@ def test_explainability_audit_strings(sample_batches, sample_markets):
             f"Baseline reason string lacks quantitative figures: '{row.reason}'"
         )
 
+
+# ==============================================================================
+# 10. FASTAPI TESTCLIENT ENDPOINTS & REAL-WORLD SCENARIO 4 INGESTION TEST
+# ==============================================================================
+
+def test_api_endpoints():
+    """
+    Verifies FastAPI server endpoints using TestClient:
+    - GET /api/v1/health: 200 OK
+    - GET /api/v1/default-scenario: 200 OK and valid audit
+    - POST /api/v1/optimize: 200 OK and solved
+    - POST /api/v1/upload-dataset: Corrupt judge dataset 4 returns 200 OK
+    """
+    from fastapi.testclient import TestClient
+    from backend.main import app
+
+    client = TestClient(app)
+
+    # 1. GET /api/v1/health
+    res_health = client.get("/api/v1/health")
+    assert res_health.status_code == 200
+    assert res_health.json()["status"] == "ok"
+
+    # 2. GET /api/v1/default-scenario
+    res_def = client.get("/api/v1/default-scenario")
+    assert res_def.status_code == 200
+    data_def = res_def.json()
+    assert data_def["status"] in ("OPTIMAL", "FEASIBLE")
+    assert data_def["constraint_audit"]["mass_balance_passed"] is True
+    assert data_def["constraint_audit"]["capacity_limits_passed"] is True
+    assert data_def["constraint_audit"]["shelf_life_limits_passed"] is True
+    assert data_def["kpis"]["optimized"]["net_revenue"] > data_def["kpis"]["baseline"]["net_revenue"]
+
+    # 3. POST /api/v1/optimize
+    req_payload = {
+        "batches": data_def["batches"],
+        "markets": data_def["markets"],
+        "disruptions": {
+            "highway_delay_hours": 3.0,
+            "reefer_temp_spike_c": 2.0,
+            "demand_multiplier": 1.1,
+            "capacity_reduction_pct": 10.0,
+        },
+    }
+    res_opt = client.post("/api/v1/optimize", json=req_payload)
+    assert res_opt.status_code == 200
+    data_opt = res_opt.json()
+    assert data_opt["status"] in ("OPTIMAL", "FEASIBLE")
+    assert data_opt["disruptions"]["highway_delay_hours"] == 3.0
+
+    # 4. POST /api/v1/upload-dataset (scenario_4 corrupt CSVs)
+    datasets_dir = Path(__file__).parent.parent / "datasets"
+    b_path = datasets_dir / "scenario_4_corrupt_batches.csv"
+    m_path = datasets_dir / "scenario_4_corrupt_markets.csv"
+
+    assert b_path.exists() and m_path.exists(), "Benchmark scenario 4 CSV files missing"
+
+    with open(b_path, "rb") as fb, open(m_path, "rb") as fm:
+        files = {
+            "batches_file": ("scenario_4_corrupt_batches.csv", fb, "text/csv"),
+            "markets_file": ("scenario_4_corrupt_markets.csv", fm, "text/csv"),
+        }
+        res_up = client.post("/api/v1/upload-dataset", files=files)
+
+    assert res_up.status_code == 200
+    data_up = res_up.json()
+    assert data_up["status"] in ("OPTIMAL", "FEASIBLE")
+    assert data_up["constraint_audit"]["mass_balance_passed"] is True
+    assert len(data_up["ingestion_warnings"]) > 10
+
+

@@ -1,4 +1,4 @@
-name: FreshRoute Backend CI
+name: FreshRoute CI
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
-    name: Run Tests & Solver Verification
+  backend-test:
+    name: Intensive Solver & Scenario Testing
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -35,7 +35,13 @@ jobs:
         run: |
           python backend/core/solver.py
 
-      - name: Run Pytest Test Suite
+      - name: Run Benchmark Scenarios Generator & Solvers
+        env:
+          PYTHONPATH: .
+        run: |
+          python datasets/generate_scenarios.py
+
+      - name: Run Pytest Test Suite (25 Tests: Parser, Solver, Scenarios)
         env:
           PYTHONPATH: .
         run: |
@@ -74,3 +80,51 @@ jobs:
           assert data['kpis']['optimized']['net_revenue'] > data['kpis']['baseline']['net_revenue']
           print(f'Default scenario verified: {data[\"status\"]}, Solve Time: {data[\"solve_time_ms\"]} ms')
           "
+
+      - name: Intensive Real-World Scenario Stress Test
+        env:
+          PYTHONPATH: .
+        run: |
+          python -c "
+          from fastapi.testclient import TestClient
+          from backend.main import app
+          import pathlib
+
+          client = TestClient(app)
+          datasets_dir = pathlib.Path('datasets')
+
+          # Verify multipart upload of dirty stress-test CSVs
+          with open(datasets_dir / 'scenario_4_corrupt_batches.csv', 'rb') as fb, \
+               open(datasets_dir / 'scenario_4_corrupt_markets.csv', 'rb') as fm:
+              res = client.post('/api/v1/upload-dataset', files={
+                  'batches_file': ('scenario_4_corrupt_batches.csv', fb, 'text/csv'),
+                  'markets_file': ('scenario_4_corrupt_markets.csv', fm, 'text/csv'),
+              })
+              assert res.status_code == 200, f'Upload corrupt scenario 4 failed: {res.text}'
+              data = res.json()
+              assert data['status'] == 'OPTIMAL'
+              assert data['constraint_audit']['mass_balance_passed'] is True
+              assert len(data['ingestion_warnings']) > 10
+              print('Scenario 4 Stress Test Verified: OPTIMAL with', len(data['ingestion_warnings']), 'warnings')
+          "
+
+  frontend-build:
+    name: Frontend TypeScript & Vite Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm --prefix frontend install
+
+      - name: Run TypeScript & Vite Production Build
+        run: npm --prefix frontend run build

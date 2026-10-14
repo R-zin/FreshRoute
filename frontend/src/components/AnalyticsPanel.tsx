@@ -1,9 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
   ResponsiveContainer,
   BarChart,
   Bar,
-  LineChart,
   Line,
   XAxis,
   YAxis,
@@ -15,15 +14,12 @@ import {
 } from 'recharts';
 import { OptimizeResponse } from '../types/api';
 import {
-  TrendingUp,
   BarChart3,
   Activity,
   ShieldCheck,
   ArrowUpRight,
   Sparkles,
   Info,
-  DollarSign,
-  Leaf,
 } from 'lucide-react';
 
 export interface AnalyticsPanelProps {
@@ -149,7 +145,6 @@ const MonteCarloCustomTooltip: React.FC<CustomTooltipProps> = ({
 
 export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ response }) => {
   const { kpis, monte_carlo_summary } = response;
-  const [mcMetric, setMcMetric] = useState<'revenue' | 'spoilage'>('revenue');
 
   // Chart 1: Shared Economic Cost Model Data
   const costModelData = useMemo(() => {

@@ -15,6 +15,7 @@ Features:
 
 from __future__ import annotations
 
+import ast
 import asyncio
 import hashlib
 import io
@@ -588,29 +589,52 @@ def parse_markets_df(df: pd.DataFrame, known_commodities: list[str] | None = Non
             # Wide format: check for JSON string cells first
             json_parsed = False
             if col_demand and pd.notna(first_row[col_demand]):
-                val_str = str(first_row[col_demand]).strip()
-                if val_str.startswith("{") and val_str.endswith("}"):
-                    try:
-                        d_dict = json.loads(val_str)
-                        for k, v in d_dict.items():
-                            c_k = normalize_commodity_name(k)
-                            v_clean, _ = _clean_float(v, default=0.0)
-                            demand_kg[c_k] = max(0.0, round(v_clean, 2))
-                        json_parsed = True
-                    except Exception:
-                        pass
+                val = first_row[col_demand]
+                if isinstance(val, dict):
+                    for k, v in val.items():
+                        c_k = normalize_commodity_name(k)
+                        v_clean, _ = _clean_float(v, default=0.0)
+                        demand_kg[c_k] = max(0.0, round(v_clean, 2))
+                    json_parsed = True
+                else:
+                    val_str = str(val).strip()
+                    if val_str.startswith("{") and val_str.endswith("}"):
+                        try:
+                            d_dict = json.loads(val_str)
+                        except Exception:
+                            try:
+                                d_dict = ast.literal_eval(val_str)
+                            except Exception:
+                                d_dict = {}
+                        if isinstance(d_dict, dict):
+                            for k, v in d_dict.items():
+                                c_k = normalize_commodity_name(k)
+                                v_clean, _ = _clean_float(v, default=0.0)
+                                demand_kg[c_k] = max(0.0, round(v_clean, 2))
+                            json_parsed = True
 
             if col_price and pd.notna(first_row[col_price]):
-                val_str = str(first_row[col_price]).strip()
-                if val_str.startswith("{") and val_str.endswith("}"):
-                    try:
-                        p_dict = json.loads(val_str)
-                        for k, v in p_dict.items():
-                            c_k = normalize_commodity_name(k)
-                            v_clean, _ = _clean_float(v, default=35.0)
-                            market_price_kg[c_k] = max(0.0, round(v_clean, 2))
-                    except Exception:
-                        pass
+                val = first_row[col_price]
+                if isinstance(val, dict):
+                    for k, v in val.items():
+                        c_k = normalize_commodity_name(k)
+                        v_clean, _ = _clean_float(v, default=35.0)
+                        market_price_kg[c_k] = max(0.0, round(v_clean, 2))
+                else:
+                    val_str = str(val).strip()
+                    if val_str.startswith("{") and val_str.endswith("}"):
+                        try:
+                            p_dict = json.loads(val_str)
+                        except Exception:
+                            try:
+                                p_dict = ast.literal_eval(val_str)
+                            except Exception:
+                                p_dict = {}
+                        if isinstance(p_dict, dict):
+                            for k, v in p_dict.items():
+                                c_k = normalize_commodity_name(k)
+                                v_clean, _ = _clean_float(v, default=35.0)
+                                market_price_kg[c_k] = max(0.0, round(v_clean, 2))
 
             # If not JSON, check wide columns (e.g. demand_tomato, price_tomato)
             if not json_parsed and wide_demand_cols:
