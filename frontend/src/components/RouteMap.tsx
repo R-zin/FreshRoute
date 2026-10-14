@@ -104,31 +104,31 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
         discounts: Array.from(data.discounts),
       }));
 
-      // Route status and polyline color calculation
-      // Emerald: min rsl_buffer_hours >= 12
-      // Amber: 0 <= min rsl_buffer_hours < 12 OR active markdown rescue
-      // Rose dashed: zero feasible shipments or route blocked
+      // High-contrast monochrome route status
+      // Safe: Pure white (#FFFFFF)
+      // Tight / Markdown: Silver Slate (#94A3B8)
+      // Blocked: Dark muted dashed (#475569)
       let routeStatus: 'SAFE' | 'WARNING' | 'BLOCKED' = 'BLOCKED';
-      let lineColor = '#f43f5e'; // Rose dashed
+      let lineColor = '#475569';
       let isDashed = true;
 
       if (dispatchedKg > 0 && minRslBufferHours !== null) {
         if (minRslBufferHours >= 12.0 && markdownKg === 0) {
           routeStatus = 'SAFE';
-          lineColor = '#10b981'; // Emerald
+          lineColor = '#ffffff';
           isDashed = false;
         } else if (minRslBufferHours >= 0.0) {
           routeStatus = 'WARNING';
-          lineColor = '#f59e0b'; // Amber (active markdown rescue or narrow buffer)
+          lineColor = '#94a3b8';
           isDashed = false;
         } else {
           routeStatus = 'BLOCKED';
-          lineColor = '#f43f5e';
+          lineColor = '#475569';
           isDashed = true;
         }
       } else {
         routeStatus = 'BLOCKED';
-        lineColor = '#f43f5e';
+        lineColor = '#475569';
         isDashed = true;
       }
 
@@ -163,41 +163,41 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
   const blockedRoutes = marketAggregations.filter((r) => r.routeStatus === 'BLOCKED').length;
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl shadow-xl overflow-hidden flex flex-col h-full relative">
+    <div className="tactile-debossed rounded-2xl shadow-xl overflow-hidden flex flex-col h-full relative">
       {/* Map Header Bar */}
-      <div className="px-5 py-4 border-b border-slate-800/80 bg-slate-950/60 flex flex-wrap items-center justify-between gap-3 shrink-0">
+      <div className="px-5 py-4 border-b border-white/[0.06] bg-[#111418] flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
-            <Truck className="w-4 h-4" />
+          <div className="w-8 h-8 rounded-lg tactile-extruded flex items-center justify-center text-white shrink-0">
+            <Truck className="w-4 h-4 text-white" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-sm font-bold text-white tracking-tight">
+              <h2 className="text-sm font-space font-bold text-white tracking-tight">
                 South India Cold-Chain Logistics Corridors
               </h2>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-mono font-medium">
+              <span className="text-[10px] px-2 py-0.5 rounded-full tactile-debossed text-white font-mono font-medium">
                 Kolar Hub Origin
               </span>
             </div>
-            <p className="text-[11px] text-slate-400">
-              Arrhenius $Q_{10}=2.0$ thermal safety margins & reefer corridor telemetry
+            <p className="text-[11px] text-slate-400 font-mono">
+              Arrhenius Q₁₀=2.0 thermal safety margins & reefer corridor telemetry
             </p>
           </div>
         </div>
 
         {/* Route Status Summary Badges */}
         <div className="flex items-center gap-2 text-xs font-mono">
-          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md tactile-extruded text-white">
+            <span className="w-2 h-2 rounded-full bg-white shadow-[0_0_6px_#ffffff]" />
             {safeRoutes} Safe
           </span>
-          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/20">
-            <span className="w-2 h-2 rounded-full bg-amber-400" />
-            {warningRoutes} Markdown/Tight
+          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md tactile-pressed text-slate-300 border border-white/10">
+            <span className="w-2 h-2 rounded-full bg-slate-400" />
+            {warningRoutes} Tight Margin
           </span>
           {blockedRoutes > 0 && (
-            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-500/10 text-rose-300 border border-rose-500/20">
-              <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" />
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md tactile-debossed text-slate-500">
+              <span className="w-2 h-2 rounded-full bg-slate-600" />
               {blockedRoutes} Blocked
             </span>
           )}
@@ -205,13 +205,13 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
       </div>
 
       {/* Map Container Area */}
-      <div className="relative w-full h-[460px] sm:h-[500px] lg:h-[540px] flex-1 bg-slate-950">
+      <div className="relative w-full h-[460px] sm:h-[500px] lg:h-[540px] flex-1 bg-[#0b0e12]">
         <MapContainer
           center={[13.4, 78.2]}
           zoom={6}
           scrollWheelZoom={false}
           className="w-full h-full z-0"
-          style={{ background: '#0b0f19' }}
+          style={{ background: '#0b0e12' }}
         >
           {/* Dark Mode Basemap Tiles */}
           <TileLayer
@@ -229,9 +229,9 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
             center={originCenter}
             radius={18}
             pathOptions={{
-              color: '#06b6d4',
-              fillColor: '#0891b2',
-              fillOpacity: 0.15,
+              color: '#ffffff',
+              fillColor: '#ffffff',
+              fillOpacity: 0.12,
               weight: 1.5,
               dashArray: '3, 4',
             }}
@@ -242,8 +242,8 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
             center={originCenter}
             radius={10}
             pathOptions={{
-              color: '#38bdf8',
-              fillColor: '#4f46e5',
+              color: '#ffffff',
+              fillColor: '#111418',
               fillOpacity: 0.95,
               weight: 3,
             }}
@@ -255,49 +255,49 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
               permanent={false}
             >
               <div className="font-sans text-xs">
-                <span className="font-bold text-cyan-300 block">ORIGIN HUB</span>
+                <span className="font-bold text-white block">ORIGIN HUB</span>
                 <span>{ORIGIN_HUB.name}</span>
               </div>
             </Tooltip>
 
             <Popup className="custom-dark-popup">
               <div className="p-4 w-72 text-slate-100 font-sans space-y-3">
-                <div className="flex items-start gap-2.5 border-b border-slate-800 pb-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-cyan-400 shrink-0">
-                    <MapPin className="w-4 h-4" />
+                <div className="flex items-start gap-2.5 border-b border-white/[0.08] pb-2.5">
+                  <div className="w-8 h-8 rounded-lg tactile-extruded flex items-center justify-center text-white shrink-0">
+                    <MapPin className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-semibold tracking-wider uppercase text-cyan-400 block font-mono">
+                    <span className="text-[10px] font-semibold tracking-wider uppercase text-slate-400 block font-mono">
                       Central Packinghouse Node
                     </span>
-                    <h4 className="text-xs font-bold text-white leading-tight">
+                    <h4 className="text-xs font-bold text-white leading-tight font-space">
                       {ORIGIN_HUB.name}
                     </h4>
                   </div>
                 </div>
 
-                <div className="space-y-1.5 text-xs text-slate-300">
+                <div className="space-y-1.5 text-xs text-slate-300 font-mono">
                   <div className="flex justify-between">
                     <span className="text-slate-400">Node Identifier:</span>
-                    <span className="font-mono text-slate-200 font-semibold">{ORIGIN_HUB.hub_id}</span>
+                    <span className="text-white font-semibold">{ORIGIN_HUB.hub_id}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-400">Coordinates:</span>
-                    <span className="font-mono text-slate-300">{ORIGIN_HUB.lat.toFixed(4)}° N, {ORIGIN_HUB.lng.toFixed(4)}° E</span>
+                    <span className="text-slate-300">{ORIGIN_HUB.lat.toFixed(4)}° N, {ORIGIN_HUB.lng.toFixed(4)}° E</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-400">Total Produce Stock:</span>
-                    <span className="font-mono text-emerald-400 font-semibold">
+                    <span className="text-white font-semibold">
                       {response.batches.reduce((s, b) => s + b.quantity_kg, 0).toLocaleString('en-IN')} kg
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-400">Active Outbound Corridors:</span>
-                    <span className="font-mono text-cyan-300 font-semibold">{marketAggregations.length} APMC Mandis</span>
+                    <span className="text-white font-semibold">{marketAggregations.length} APMC Mandis</span>
                   </div>
                 </div>
 
-                <div className="bg-slate-950/80 p-2 rounded-lg border border-slate-800/80 text-[11px] text-slate-400 leading-snug">
+                <div className="tactile-debossed p-2 rounded-lg text-[11px] text-slate-400 leading-snug">
                   Primary aggregation facility servicing Kolar, Malur, and Chikkaballapur farm cooperatives under MoFPI cold-chain protocols.
                 </div>
               </div>
@@ -318,8 +318,8 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
                   positions={polylinePositions}
                   pathOptions={{
                     color: route.lineColor,
-                    weight: route.dispatchedKg > 0 ? 3.5 : 2,
-                    opacity: route.dispatchedKg > 0 ? 0.85 : 0.45,
+                    weight: route.dispatchedKg > 0 ? 3.5 : 1.5,
+                    opacity: route.dispatchedKg > 0 ? 0.9 : 0.4,
                     dashArray: route.isDashed ? '6, 6' : undefined,
                   }}
                 >
@@ -330,7 +330,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
                     sticky
                   >
                     <div className="font-sans text-xs space-y-0.5">
-                      <div className="font-bold text-white flex items-center gap-1.5">
+                      <div className="font-bold text-white flex items-center gap-1.5 font-space">
                         <span
                           className="w-2 h-2 rounded-full"
                           style={{ backgroundColor: route.lineColor }}
@@ -387,38 +387,38 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
                   <Popup className="custom-dark-popup">
                     <div className="p-4 w-80 text-slate-100 font-sans space-y-3.5">
                       {/* Popup Header */}
-                      <div className="flex items-start justify-between border-b border-slate-800 pb-3 gap-2">
+                      <div className="flex items-start justify-between border-b border-white/[0.08] pb-3 gap-2">
                         <div>
-                          <span className="text-[10px] font-semibold tracking-wider uppercase text-cyan-400 block font-mono">
-                            APMC Wholesale Destination • {route.marketId}
+                          <span className="text-[10px] font-semibold tracking-wider uppercase text-slate-400 block font-mono">
+                            APMC Wholesale • {route.marketId}
                           </span>
-                          <h4 className="text-sm font-bold text-white leading-tight mt-0.5">
+                          <h4 className="text-sm font-bold text-white leading-tight mt-0.5 font-space">
                             {route.marketName}
                           </h4>
                         </div>
                         <span
-                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase border shrink-0 ${
+                          className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded uppercase shrink-0 ${
                             route.routeStatus === 'SAFE'
-                              ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                              ? 'tactile-extruded text-white'
                               : route.routeStatus === 'WARNING'
-                              ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
-                              : 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+                              ? 'tactile-pressed text-slate-300'
+                              : 'tactile-debossed text-slate-500'
                           }`}
                         >
                           {route.routeStatus === 'SAFE'
                             ? 'Optimal Buffer'
                             : route.routeStatus === 'WARNING'
                             ? 'Margin Rescue'
-                            : 'Route Infeasible'}
+                            : 'Infeasible'}
                         </span>
                       </div>
 
                       {/* Transit & Reefer Conditions Grid */}
                       <div className="grid grid-cols-2 gap-2 text-xs">
-                        <div className="bg-slate-950/70 p-2 rounded-lg border border-slate-800">
+                        <div className="tactile-debossed p-2 rounded-lg">
                           <div className="flex items-center gap-1.5 text-slate-400 mb-0.5">
-                            <Clock className="w-3.5 h-3.5 text-blue-400" />
-                            <span className="text-[10px] uppercase tracking-wider">Transit Time</span>
+                            <Clock className="w-3.5 h-3.5 text-white" />
+                            <span className="text-[10px] font-mono uppercase tracking-wider">Transit Time</span>
                           </div>
                           <div className="font-mono text-sm font-bold text-white">
                             {route.effectiveTransitHours.toFixed(1)} hrs
@@ -428,10 +428,10 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
                           </div>
                         </div>
 
-                        <div className="bg-slate-950/70 p-2 rounded-lg border border-slate-800">
+                        <div className="tactile-debossed p-2 rounded-lg">
                           <div className="flex items-center gap-1.5 text-slate-400 mb-0.5">
-                            <Thermometer className="w-3.5 h-3.5 text-rose-400" />
-                            <span className="text-[10px] uppercase tracking-wider">Reefer Temp</span>
+                            <Thermometer className="w-3.5 h-3.5 text-white" />
+                            <span className="text-[10px] font-mono uppercase tracking-wider">Reefer Temp</span>
                           </div>
                           <div className="font-mono text-sm font-bold text-white">
                             {route.effectiveTransitTempC.toFixed(1)}°C
@@ -444,25 +444,21 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
 
                       {/* Capacity Utilization Bar */}
                       <div className="space-y-1.5">
-                        <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center justify-between text-xs font-mono">
                           <span className="text-slate-400 flex items-center gap-1">
                             <Layers className="w-3.5 h-3.5 text-slate-400" />
-                            Capacity Utilization:
+                            Capacity:
                           </span>
-                          <span className="font-mono font-bold text-white">
+                          <span className="font-bold text-white">
                             {route.dispatchedKg.toLocaleString('en-IN')} / {route.maxCapacityKg.toLocaleString('en-IN')} kg
                             <span className="text-slate-400 font-normal ml-1">
                               ({route.capacityUtilizationPct.toFixed(1)}%)
                             </span>
                           </span>
                         </div>
-                        <div className="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+                        <div className="w-full tactile-slider-track rounded-full h-2 overflow-hidden">
                           <div
-                            className={`h-full rounded-full transition-all duration-300 ${
-                              route.capacityUtilizationPct >= 95
-                                ? 'bg-amber-400'
-                                : 'bg-gradient-to-r from-teal-500 to-emerald-400'
-                            }`}
+                            className="bg-white h-full rounded-full transition-all duration-300 shadow-[0_0_8px_rgba(255,255,255,0.4)]"
                             style={{
                               width: `${Math.min(100, Math.max(0, route.capacityUtilizationPct))}%`,
                             }}
@@ -471,32 +467,32 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
                       </div>
 
                       {/* Thermal Buffer Margin Callout */}
-                      <div className="bg-slate-950/80 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs">
+                      <div className="tactile-debossed p-2.5 rounded-lg flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
                           {route.routeStatus === 'SAFE' ? (
-                            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                            <ShieldCheck className="w-4 h-4 text-white" />
                           ) : route.routeStatus === 'WARNING' ? (
-                            <AlertTriangle className="w-4 h-4 text-amber-400" />
+                            <AlertTriangle className="w-4 h-4 text-slate-300" />
                           ) : (
-                            <XCircle className="w-4 h-4 text-rose-400" />
+                            <XCircle className="w-4 h-4 text-slate-500" />
                           )}
-                          <span className="text-slate-300 text-[11px]">
+                          <span className="text-slate-300 text-[11px] font-mono">
                             {route.minRslBufferHours !== null
                               ? `Min Thermal Buffer: ${route.minRslBufferHours.toFixed(1)}h`
                               : 'No viable thermal corridor'}
                           </span>
                         </div>
                         {route.markdownKg > 0 && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-300 bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30">
-                            <Sparkles className="w-3 h-3" />
-                            {route.markdownKg.toLocaleString('en-IN')} kg discounted
+                          <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-white tactile-extruded px-2 py-0.5 rounded">
+                            <Sparkles className="w-3 h-3 text-white" />
+                            {route.markdownKg.toLocaleString('en-IN')} kg disc.
                           </span>
                         )}
                       </div>
 
                       {/* Commodity Breakdown */}
-                      <div className="space-y-1.5 pt-1 border-t border-slate-800">
-                        <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                      <div className="space-y-1.5 pt-1 border-t border-white/[0.08]">
+                        <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 flex items-center justify-between font-mono">
                           <span>Delivered Produce Breakdown</span>
                           <Package className="w-3.5 h-3.5 text-slate-500" />
                         </div>
@@ -506,16 +502,16 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
                             {route.commodities.map((c) => (
                               <div
                                 key={c.commodity}
-                                className="flex items-center justify-between text-xs py-1 px-2 rounded bg-slate-950/50 border border-slate-800/60"
+                                className="flex items-center justify-between text-xs py-1 px-2 rounded tactile-debossed"
                               >
-                                <span className="text-slate-200 font-medium">{c.commodity}</span>
+                                <span className="text-white font-medium">{c.commodity}</span>
                                 <div className="flex items-center gap-2">
                                   {c.discounts.length > 0 && (
-                                    <span className="text-[10px] text-amber-400 font-mono bg-amber-500/10 px-1.5 py-0.2 rounded border border-amber-500/20">
+                                    <span className="text-[10px] text-white font-mono tactile-extruded px-1.5 py-0.2 rounded">
                                       {c.discounts.map((d) => `-${d}%`).join(', ')}
                                     </span>
                                   )}
-                                  <span className="font-mono text-emerald-400 font-semibold">
+                                  <span className="font-mono text-white font-semibold">
                                     {c.quantityKg.toLocaleString('en-IN')} kg
                                   </span>
                                 </div>
@@ -523,7 +519,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
                             ))}
                           </div>
                         ) : (
-                          <div className="text-[11px] text-slate-500 italic py-1 text-center bg-slate-950/40 rounded border border-slate-800/40">
+                          <div className="text-[11px] text-slate-500 italic py-1 text-center tactile-debossed rounded">
                             No allocations to this market under current disruption constraints.
                           </div>
                         )}
@@ -537,36 +533,36 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
         </MapContainer>
 
         {/* Floating Interactive Map Legend */}
-        <div className="absolute bottom-4 right-4 z-10 bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-xl p-3 shadow-2xl text-xs max-w-xs space-y-2 pointer-events-auto">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between pb-1 border-b border-slate-800">
+        <div className="absolute bottom-4 right-4 z-10 tactile-debossed bg-[#111418]/95 backdrop-blur-md rounded-xl p-3 shadow-2xl text-xs max-w-xs space-y-2 pointer-events-auto border border-white/[0.08]">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between pb-1 border-b border-white/[0.06] font-mono">
             <span>Thermal Corridor Legend</span>
-            <span className="font-mono text-[9px] text-slate-500">Q₁₀ Arrhenius</span>
+            <span className="text-slate-500 text-[9px]">Q₁₀ Arrhenius</span>
           </div>
 
           <div className="space-y-1.5 text-[11px]">
             <div className="flex items-center gap-2">
-              <span className="w-5 h-1 rounded-full bg-emerald-500 shrink-0" />
+              <span className="w-5 h-1 rounded-full bg-white shadow-[0_0_6px_#ffffff] shrink-0" />
               <span className="text-slate-300">
-                Safe Buffer (<strong className="text-emerald-400 font-mono">≥ 12h</strong> margin)
+                Safe Buffer (<strong className="text-white font-mono">≥ 12h</strong> margin)
               </span>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="w-5 h-1 rounded-full bg-amber-500 shrink-0" />
+              <span className="w-5 h-1 rounded-full bg-slate-400 shrink-0" />
               <span className="text-slate-300">
-                Tight Margin (<strong className="text-amber-400 font-mono">0–12h</strong> / Markdown Rescue)
+                Tight Margin (<strong className="text-slate-200 font-mono">0–12h</strong> / Markdown Rescue)
               </span>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="w-5 h-1 border-b-2 border-dashed border-rose-500 shrink-0" />
-              <span className="text-slate-300">
-                Blocked Corridor (Thermal Decay / Deficit)
+              <span className="w-5 h-1 border-b-2 border-dashed border-slate-600 shrink-0" />
+              <span className="text-slate-400">
+                Blocked Corridor (Decay / Deficit)
               </span>
             </div>
 
-            <div className="flex items-center gap-2 pt-1 border-t border-slate-800/80">
-              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 ring-2 ring-indigo-500 shrink-0" />
+            <div className="flex items-center gap-2 pt-1 border-t border-white/[0.06]">
+              <span className="w-2.5 h-2.5 rounded-full bg-white ring-2 ring-slate-700 shrink-0" />
               <span className="text-slate-300 font-medium">
                 Origin Packinghouse (Kolar)
               </span>

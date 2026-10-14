@@ -122,24 +122,21 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
   };
 
   return (
-    <div className="bg-slate-900/95 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl relative">
-      {/* Background ambient decorative glow */}
-      <div className="absolute top-0 right-1/3 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
-
+    <div className="tactile-debossed rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl relative border border-white/[0.06]">
       {/* Header Bar */}
-      <div className="p-5 sm:p-6 border-b border-slate-800/80 flex items-center justify-between">
+      <div className="p-5 sm:p-6 border-b border-white/[0.06] bg-[#111418] flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-md">
-            <Upload className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-xl tactile-extruded flex items-center justify-center text-white shrink-0">
+            <Upload className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
+            <h3 className="text-base font-space font-bold text-white tracking-tight flex items-center gap-2">
               Judge Scenario & Dataset Ingestion
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-mono font-medium">
+              <span className="text-[10px] px-2 py-0.5 rounded-full tactile-debossed text-white font-mono font-medium border border-white/5">
                 Fuzzy Unit Normalizer
               </span>
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 font-sans">
               Upload custom test scenarios with automatic schema normalization (e.g. MT → kg, days → hours)
             </p>
           </div>
@@ -148,7 +145,7 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
         {onClose && (
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-lg tactile-extruded text-slate-400 hover:text-white transition-colors"
             title="Close Uploader"
           >
             <X className="w-5 h-5" />
@@ -161,18 +158,18 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
             FUZZY SCHEMA & UNIT NORMALIZATION LOG BANNER (if warnings present)
            ========================================================================= */}
         {warnings.length > 0 && (
-          <div className="bg-amber-950/40 border border-amber-500/40 rounded-xl p-4 shadow-lg text-amber-200 space-y-2">
+          <div className="tactile-debossed rounded-xl p-4 text-white space-y-2 border border-white/10">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-amber-300">
-                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+              <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-white font-mono">
+                <AlertTriangle className="w-4 h-4 text-white shrink-0" />
                 <span>Fuzzy Schema & Unit Normalization Log ({warnings.length} entries)</span>
               </div>
-              <span className="text-[10px] font-mono bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30">
+              <span className="text-[10px] font-mono tactile-extruded px-2 py-0.5 rounded text-white">
                 Auto-Resolved by Parser
               </span>
             </div>
 
-            <p className="text-xs text-amber-200/90 leading-relaxed">
+            <p className="text-xs text-slate-300 leading-relaxed font-sans">
               The ingestion engine automatically harmonized non-standard units, fuzzy column names, and missing produce parameters:
             </p>
 
@@ -180,10 +177,10 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
               {warnings.map((warn, idx) => (
                 <li
                   key={idx}
-                  className="flex items-start gap-2 bg-slate-950/60 p-2 rounded-lg border border-amber-500/20 text-[11px]"
+                  className="flex items-start gap-2 tactile-debossed p-2 rounded-lg text-[11px] border border-white/[0.04]"
                 >
-                  <span className="text-amber-400 font-bold">[{idx + 1}]</span>
-                  <span className="text-slate-200 leading-snug">{warn}</span>
+                  <span className="text-white font-bold">[{idx + 1}]</span>
+                  <span className="text-slate-300 leading-snug">{warn}</span>
                 </li>
               ))}
             </ul>
@@ -191,21 +188,21 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
         )}
 
         {/* Mode Selector Tabs */}
-        <div className="flex items-center gap-2 p-1 bg-slate-950/80 rounded-xl border border-slate-800/80 max-w-md">
+        <div className="tactile-slider-track p-1 rounded-xl flex items-center max-w-md font-mono text-xs">
           <button
             type="button"
             onClick={() => {
               setMode('scenario');
               setErrorMessage(null);
             }}
-            className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2 ${
+            className={`flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
               mode === 'scenario'
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-white text-black font-bold shadow-[0_0_12px_rgba(255,255,255,0.25)]'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
-            <span>Single Scenario File (.json)</span>
+            <span>Single Scenario (.json)</span>
           </button>
 
           <button
@@ -214,14 +211,14 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
               setMode('paired');
               setErrorMessage(null);
             }}
-            className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2 ${
+            className={`flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
               mode === 'paired'
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-white text-black font-bold shadow-[0_0_12px_rgba(255,255,255,0.25)]'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            <span>Paired Batches + Markets (.csv/.json)</span>
+            <span>Paired Batches + Markets</span>
           </button>
         </div>
 
@@ -237,8 +234,8 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
               onClick={() => scenarioInputRef.current?.click()}
               className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 ${
                 scenarioFile
-                  ? 'border-emerald-500/60 bg-emerald-950/20'
-                  : 'border-slate-800 hover:border-slate-700 bg-slate-950/40 hover:bg-slate-950/60'
+                  ? 'border-white/50 tactile-pressed'
+                  : 'border-white/10 hover:border-white/30 tactile-debossed'
               }`}
             >
               <input
@@ -251,8 +248,8 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
 
               {scenarioFile ? (
                 <div className="flex flex-col items-center space-y-2">
-                  <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shadow-md">
-                    <FileCheck className="w-6 h-6" />
+                  <div className="w-12 h-12 rounded-full tactile-extruded flex items-center justify-center text-white shadow-md">
+                    <FileCheck className="w-6 h-6 text-white" />
                   </div>
                   <div className="text-sm font-bold text-white font-mono">
                     {scenarioFile.name}
@@ -260,21 +257,21 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
                   <div className="text-xs text-slate-400 font-mono">
                     {(scenarioFile.size / 1024).toFixed(1)} KB • Ready for Optimization
                   </div>
-                  <span className="text-[11px] text-emerald-400 underline mt-1">
+                  <span className="text-[11px] text-white underline mt-1 font-mono">
                     Click or drop to replace
                   </span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center space-y-2.5">
-                  <div className="w-12 h-12 rounded-full bg-slate-800/80 border border-slate-700 flex items-center justify-center text-slate-400 shadow-sm">
-                    <Upload className="w-6 h-6" />
+                  <div className="w-12 h-12 rounded-full tactile-extruded flex items-center justify-center text-white shadow-sm">
+                    <Upload className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <span className="text-sm font-semibold text-slate-200 block">
+                    <span className="text-sm font-semibold text-slate-200 block font-space">
                       Choose a Scenario File or drag & drop here
                     </span>
-                    <span className="text-xs text-slate-400 block mt-0.5">
-                      Accepts standard FreshRoute JSON bundle with <code className="text-slate-300 font-mono">batches</code> & <code className="text-slate-300 font-mono">markets</code>
+                    <span className="text-xs text-slate-400 block mt-0.5 font-mono">
+                      Accepts standard perishOpt JSON bundle with <code className="text-white">batches</code> & <code className="text-white">markets</code>
                     </span>
                   </div>
                 </div>
@@ -290,8 +287,8 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
                 onClick={() => batchesInputRef.current?.click()}
                 className={`border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-all ${
                   batchesFile
-                    ? 'border-emerald-500/60 bg-emerald-950/20'
-                    : 'border-slate-800 hover:border-slate-700 bg-slate-950/40'
+                    ? 'border-white/50 tactile-pressed'
+                    : 'border-white/10 hover:border-white/30 tactile-debossed'
                 }`}
               >
                 <input
@@ -302,11 +299,11 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
                   className="hidden"
                 />
                 <div className="flex flex-col items-center space-y-2">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                    <FileText className="w-5 h-5" />
+                  <div className="w-10 h-10 rounded-lg tactile-extruded flex items-center justify-center text-white">
+                    <FileText className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-white block">
+                    <span className="text-xs font-bold text-white block font-space">
                       1. Batches Dataset
                     </span>
                     <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
@@ -314,7 +311,7 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
                     </span>
                   </div>
                   {batchesFile && (
-                    <span className="text-[10px] text-emerald-400 font-mono">
+                    <span className="text-[10px] text-white font-mono">
                       {(batchesFile.size / 1024).toFixed(1)} KB
                     </span>
                   )}
@@ -326,8 +323,8 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
                 onClick={() => marketsInputRef.current?.click()}
                 className={`border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-all ${
                   marketsFile
-                    ? 'border-emerald-500/60 bg-emerald-950/20'
-                    : 'border-slate-800 hover:border-slate-700 bg-slate-950/40'
+                    ? 'border-white/50 tactile-pressed'
+                    : 'border-white/10 hover:border-white/30 tactile-debossed'
                 }`}
               >
                 <input
@@ -338,11 +335,11 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
                   className="hidden"
                 />
                 <div className="flex flex-col items-center space-y-2">
-                  <div className="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
-                    <Layers className="w-5 h-5" />
+                  <div className="w-10 h-10 rounded-lg tactile-extruded flex items-center justify-center text-white">
+                    <Layers className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-white block">
+                    <span className="text-xs font-bold text-white block font-space">
                       2. Markets Dataset
                     </span>
                     <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
@@ -350,7 +347,7 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
                     </span>
                   </div>
                   {marketsFile && (
-                    <span className="text-[10px] text-cyan-400 font-mono">
+                    <span className="text-[10px] text-white font-mono">
                       {(marketsFile.size / 1024).toFixed(1)} KB
                     </span>
                   )}
@@ -361,8 +358,8 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
 
           {/* Error Message Alert */}
           {errorMessage && (
-            <div className="bg-rose-950/40 border border-rose-500/40 p-3 rounded-xl flex items-center gap-2 text-rose-300 text-xs">
-              <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+            <div className="tactile-pressed border border-white/20 p-3 rounded-xl flex items-center gap-2 text-white text-xs font-mono">
+              <AlertTriangle className="w-4 h-4 text-white shrink-0" />
               <span>{errorMessage}</span>
             </div>
           )}
@@ -373,7 +370,7 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
               type="button"
               onClick={handleReset}
               disabled={isUploading || (!scenarioFile && !batchesFile && !marketsFile)}
-              className="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-800 border border-slate-700 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-40"
+              className="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-medium font-mono text-slate-400 hover:text-white tactile-extruded transition-colors flex items-center justify-center gap-1.5 disabled:opacity-40"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Clear Selection</span>
@@ -386,17 +383,17 @@ export const DatasetUploader: React.FC<DatasetUploaderProps> = ({
                 (mode === 'scenario' && !scenarioFile) ||
                 (mode === 'paired' && (!batchesFile || !marketsFile))
               }
-              className="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 shadow-lg shadow-emerald-950/40 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs font-bold text-black bg-white hover:bg-slate-200 shadow-[0_0_16px_rgba(255,255,255,0.25)] transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed font-space active:scale-[0.98]"
             >
               {isUploading ? (
                 <>
-                  <Cpu className="w-4 h-4 animate-spin" />
+                  <Cpu className="w-4 h-4 animate-spin text-black" />
                   <span>Normalizing Schema & Solving MILP...</span>
                 </>
               ) : (
                 <>
-                  <Upload className="w-4 h-4" />
-                  <span>Upload & Run FreshRoute MILP</span>
+                  <Upload className="w-4 h-4 text-black" />
+                  <span>Upload & Run perishOpt MILP</span>
                 </>
               )}
             </button>
