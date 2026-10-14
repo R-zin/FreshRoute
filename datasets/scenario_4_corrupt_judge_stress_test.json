@@ -1,0 +1,44 @@
+{
+  "inventory": [
+    {
+      "id": "L-901",
+      "crop": "Tomato",
+      "stock_mt": 2.5,
+      "shelf_life_days": 1.25
+    },
+    {
+      "id": "L-902",
+      "crop": "Guava",
+      "stock_mt": 1.8,
+      "shelf_life_days": 2.5
+    },
+    {
+      "id": "L-903",
+      "crop": "Banana",
+      "quantity_kg": -120.0,
+      "rsl_hours": 18.0
+    }
+  ],
+  "destinations": [
+    {
+      "market_id": "M1",
+      "name": "Bengaluru APMC",
+      "transit_hours": 4.0,
+      "transit_temp_c": 14.0,
+      "transport_cost_per_kg": 2.5,
+      "max_capacity_kg": 5500.0,
+      "demand_kg": {
+        "Tomato": 2500.0,
+        "Guava": 1500.0
+      },
+      "market_price_kg": {
+        "Tomato": 38.0,
+        "Guava": 52.0
+      }
+    }
+  ],
+  "disruptions": {
+    "highway_delay_hours": 0.0,
+    "reefer_temp_spike_c": 0.0
+  }
+}

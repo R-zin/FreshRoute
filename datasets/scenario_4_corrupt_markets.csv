@@ -1,0 +1,9 @@
+destination_id,mandi_name,lead_time_hours,truck_temp,freight_rate_kg,handling_time,handling_fee,mandi_capacity_tons,commodity,demand_qty,selling_rate,lat,lng
+M1,Bengaluru APMC,4.0,14.0,2.5,3.0,1.2,5.5,Tomato,2500,38.0,13.0285,77.5409
+M1,Bengaluru APMC,4.0,14.0,2.5,3.0,1.2,5.5,Guava,1500,52.0,13.0285,77.5409
+M1,Bengaluru APMC,4.0,14.0,2.5,3.0,1.2,5.5,Banana,2000,32.0,13.0285,77.5409
+M2,Chennai Mandi,8.0,16.0,-1.0,3.5,1.4,6.0,Tomato,-300,42.0,NaN,NaN
+M2,Chennai Mandi,8.0,16.0,-1.0,3.5,1.4,6.0,Alphonso Mango,1000,105.0,NaN,NaN
+M3,Hyderabad Bowenpally Market,15.0,18.0,6.0,4.0,1.8,5.0,Tomato,2000,50.0,17.4691,78.4765
+M3,Hyderabad Bowenpally Market,15.0,18.0,6.0,4.0,1.8,5.0,Banana,1800,42.0,17.4691,78.4765
+,,,,,,,,,,,,

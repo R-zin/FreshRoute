@@ -1,0 +1,198 @@
+{
+  "batches": [
+    {
+      "batch_id": "B01-TOM-URG",
+      "commodity": "Tomato",
+      "quantity_kg": 1400.0,
+      "rsl_hours": 18.0,
+      "optimal_temp_c": 12.0,
+      "spoilage_cost_per_kg": 14.0,
+      "base_cost_per_kg": 18.0
+    },
+    {
+      "batch_id": "B02-GUA-URG",
+      "commodity": "Guava",
+      "quantity_kg": 1000.0,
+      "rsl_hours": 20.0,
+      "optimal_temp_c": 10.0,
+      "spoilage_cost_per_kg": 18.0,
+      "base_cost_per_kg": 25.0
+    },
+    {
+      "batch_id": "B03-BAN-URG",
+      "commodity": "Banana",
+      "quantity_kg": 1200.0,
+      "rsl_hours": 22.0,
+      "optimal_temp_c": 13.0,
+      "spoilage_cost_per_kg": 12.0,
+      "base_cost_per_kg": 15.0
+    },
+    {
+      "batch_id": "B04-TOM-FRESH",
+      "commodity": "Tomato",
+      "quantity_kg": 1800.0,
+      "rsl_hours": 58.0,
+      "optimal_temp_c": 12.0,
+      "spoilage_cost_per_kg": 14.0,
+      "base_cost_per_kg": 18.0
+    },
+    {
+      "batch_id": "B05-TOM-MID",
+      "commodity": "Tomato",
+      "quantity_kg": 1500.0,
+      "rsl_hours": 40.0,
+      "optimal_temp_c": 12.0,
+      "spoilage_cost_per_kg": 14.0,
+      "base_cost_per_kg": 18.0
+    },
+    {
+      "batch_id": "B06-GUA-FRESH",
+      "commodity": "Guava",
+      "quantity_kg": 1400.0,
+      "rsl_hours": 70.0,
+      "optimal_temp_c": 10.0,
+      "spoilage_cost_per_kg": 18.0,
+      "base_cost_per_kg": 25.0
+    },
+    {
+      "batch_id": "B07-BAN-FRESH",
+      "commodity": "Banana",
+      "quantity_kg": 2000.0,
+      "rsl_hours": 78.0,
+      "optimal_temp_c": 13.0,
+      "spoilage_cost_per_kg": 12.0,
+      "base_cost_per_kg": 15.0
+    },
+    {
+      "batch_id": "B08-BAN-MID",
+      "commodity": "Banana",
+      "quantity_kg": 1400.0,
+      "rsl_hours": 46.0,
+      "optimal_temp_c": 13.0,
+      "spoilage_cost_per_kg": 12.0,
+      "base_cost_per_kg": 15.0
+    },
+    {
+      "batch_id": "B09-MNG-PREMIUM",
+      "commodity": "Alphonso Mango",
+      "quantity_kg": 1200.0,
+      "rsl_hours": 82.0,
+      "optimal_temp_c": 13.0,
+      "spoilage_cost_per_kg": 28.0,
+      "base_cost_per_kg": 45.0
+    },
+    {
+      "batch_id": "B10-MNG-MATURE",
+      "commodity": "Alphonso Mango",
+      "quantity_kg": 900.0,
+      "rsl_hours": 36.0,
+      "optimal_temp_c": 13.0,
+      "spoilage_cost_per_kg": 28.0,
+      "base_cost_per_kg": 45.0
+    }
+  ],
+  "markets": [
+    {
+      "market_id": "M1",
+      "name": "Bengaluru Yeshwanthpur APMC",
+      "lat": 13.0285,
+      "lng": 77.5409,
+      "transit_hours": 3.5,
+      "transit_temp_c": 14.0,
+      "transport_cost_per_kg": 2.0,
+      "handling_hours": 2.5,
+      "handling_cost_per_kg": 1.2,
+      "max_capacity_kg": 6500.0,
+      "demand_kg": {
+        "Tomato": 2600.0,
+        "Guava": 1600.0,
+        "Banana": 2600.0,
+        "Alphonso Mango": 1100.0
+      },
+      "market_price_kg": {
+        "Tomato": 38.0,
+        "Guava": 52.0,
+        "Banana": 32.0,
+        "Alphonso Mango": 98.0
+      }
+    },
+    {
+      "market_id": "M2",
+      "name": "Chennai Koyambedu Hub",
+      "lat": 13.0694,
+      "lng": 80.1948,
+      "transit_hours": 7.5,
+      "transit_temp_c": 15.0,
+      "transport_cost_per_kg": 3.8,
+      "handling_hours": 3.0,
+      "handling_cost_per_kg": 1.4,
+      "max_capacity_kg": 6500.0,
+      "demand_kg": {
+        "Tomato": 2600.0,
+        "Guava": 1600.0,
+        "Banana": 2600.0,
+        "Alphonso Mango": 1200.0
+      },
+      "market_price_kg": {
+        "Tomato": 44.0,
+        "Guava": 58.0,
+        "Banana": 36.0,
+        "Alphonso Mango": 108.0
+      }
+    },
+    {
+      "market_id": "M3",
+      "name": "Hyderabad Bowenpally Market",
+      "lat": 17.4691,
+      "lng": 78.4765,
+      "transit_hours": 15.0,
+      "transit_temp_c": 18.0,
+      "transport_cost_per_kg": 6.8,
+      "handling_hours": 4.0,
+      "handling_cost_per_kg": 1.8,
+      "max_capacity_kg": 5500.0,
+      "demand_kg": {
+        "Tomato": 2200.0,
+        "Guava": 1600.0,
+        "Banana": 2200.0,
+        "Alphonso Mango": 1100.0
+      },
+      "market_price_kg": {
+        "Tomato": 50.0,
+        "Guava": 68.0,
+        "Banana": 42.0,
+        "Alphonso Mango": 122.0
+      }
+    },
+    {
+      "market_id": "M4",
+      "name": "Kochi Maradu Retail Hub",
+      "lat": 9.9261,
+      "lng": 76.3197,
+      "transit_hours": 12.0,
+      "transit_temp_c": 16.0,
+      "transport_cost_per_kg": 5.5,
+      "handling_hours": 3.5,
+      "handling_cost_per_kg": 1.6,
+      "max_capacity_kg": 4800.0,
+      "demand_kg": {
+        "Tomato": 1800.0,
+        "Guava": 1100.0,
+        "Banana": 1800.0,
+        "Alphonso Mango": 900.0
+      },
+      "market_price_kg": {
+        "Tomato": 46.0,
+        "Guava": 62.0,
+        "Banana": 39.0,
+        "Alphonso Mango": 114.0
+      }
+    }
+  ],
+  "disruptions": {
+    "highway_delay_hours": 0.0,
+    "reefer_temp_spike_c": 8.0,
+    "demand_multiplier": 1.0,
+    "capacity_reduction_pct": 0.0
+  }
+}
