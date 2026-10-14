@@ -7,15 +7,14 @@ cost accounting ledger, and FastAPI REST endpoints against SHARED_API_CONTRACT.m
 import pytest
 from fastapi.testclient import TestClient
 
-from backend.main import app
-from backend.core.schemas import Batch, Market, DisruptionOverrides, OptimizeRequest
+from backend.core.schemas import Batch, DisruptionOverrides, Market
 from backend.core.solver import (
     calculate_effective_rsl,
-    run_freshroute_milp,
     run_baseline_fifo,
-    compute_strategy_kpis,
+    run_freshroute_milp,
     solve_scenario,
 )
+from backend.main import app
 
 
 @pytest.fixture
