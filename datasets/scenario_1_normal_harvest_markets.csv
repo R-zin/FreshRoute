@@ -1,0 +1,17 @@
+market_id,name,lat,lng,transit_hours,transit_temp_c,transport_cost_per_kg,handling_hours,handling_cost_per_kg,max_capacity_kg,commodity,demand_kg,market_price_kg
+M1,Bengaluru Yeshwanthpur APMC,13.0285,77.5409,3.5,14.0,2.0,2.5,1.2,6500.0,Tomato,2600.0,38.0
+M1,Bengaluru Yeshwanthpur APMC,13.0285,77.5409,3.5,14.0,2.0,2.5,1.2,6500.0,Guava,1600.0,52.0
+M1,Bengaluru Yeshwanthpur APMC,13.0285,77.5409,3.5,14.0,2.0,2.5,1.2,6500.0,Banana,2600.0,32.0
+M1,Bengaluru Yeshwanthpur APMC,13.0285,77.5409,3.5,14.0,2.0,2.5,1.2,6500.0,Alphonso Mango,1100.0,98.0
+M2,Chennai Koyambedu Hub,13.0694,80.1948,7.5,15.0,3.8,3.0,1.4,6500.0,Tomato,2600.0,44.0
+M2,Chennai Koyambedu Hub,13.0694,80.1948,7.5,15.0,3.8,3.0,1.4,6500.0,Guava,1600.0,58.0
+M2,Chennai Koyambedu Hub,13.0694,80.1948,7.5,15.0,3.8,3.0,1.4,6500.0,Banana,2600.0,36.0
+M2,Chennai Koyambedu Hub,13.0694,80.1948,7.5,15.0,3.8,3.0,1.4,6500.0,Alphonso Mango,1200.0,108.0
+M3,Hyderabad Bowenpally Market,17.4691,78.4765,15.0,18.0,6.8,4.0,1.8,5500.0,Tomato,2200.0,50.0
+M3,Hyderabad Bowenpally Market,17.4691,78.4765,15.0,18.0,6.8,4.0,1.8,5500.0,Guava,1600.0,68.0
+M3,Hyderabad Bowenpally Market,17.4691,78.4765,15.0,18.0,6.8,4.0,1.8,5500.0,Banana,2200.0,42.0
+M3,Hyderabad Bowenpally Market,17.4691,78.4765,15.0,18.0,6.8,4.0,1.8,5500.0,Alphonso Mango,1100.0,122.0
+M4,Kochi Maradu Retail Hub,9.9261,76.3197,12.0,16.0,5.5,3.5,1.6,4800.0,Tomato,1800.0,46.0
+M4,Kochi Maradu Retail Hub,9.9261,76.3197,12.0,16.0,5.5,3.5,1.6,4800.0,Guava,1100.0,62.0
+M4,Kochi Maradu Retail Hub,9.9261,76.3197,12.0,16.0,5.5,3.5,1.6,4800.0,Banana,1800.0,39.0
+M4,Kochi Maradu Retail Hub,9.9261,76.3197,12.0,16.0,5.5,3.5,1.6,4800.0,Alphonso Mango,900.0,114.0
