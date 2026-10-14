@@ -39,7 +39,7 @@ jobs:
         env:
           PYTHONPATH: .
         run: |
-          pytest tests/test_solver.py -v --durations=10
+          pytest tests/ -v --durations=10
 
       - name: Smoke Test FastAPI Health Endpoint
         env:

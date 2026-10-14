@@ -1,0 +1,11 @@
+batch_id,commodity,quantity_kg,rsl_hours,optimal_temp_c,spoilage_cost_per_kg,base_cost_per_kg
+B01-TOM-URG,Tomato,1400.0,18.0,12.0,14.0,18.0
+B02-GUA-URG,Guava,1000.0,20.0,10.0,18.0,25.0
+B03-BAN-URG,Banana,1200.0,22.0,13.0,12.0,15.0
+B04-TOM-FRESH,Tomato,1800.0,58.0,12.0,14.0,18.0
+B05-TOM-MID,Tomato,1500.0,40.0,12.0,14.0,18.0
+B06-GUA-FRESH,Guava,1400.0,70.0,10.0,18.0,25.0
+B07-BAN-FRESH,Banana,2000.0,78.0,13.0,12.0,15.0
+B08-BAN-MID,Banana,1400.0,46.0,13.0,12.0,15.0
+B09-MNG-PREMIUM,Alphonso Mango,1200.0,82.0,13.0,28.0,45.0
+B10-MNG-MATURE,Alphonso Mango,900.0,36.0,13.0,28.0,45.0
