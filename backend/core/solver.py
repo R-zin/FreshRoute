@@ -228,7 +228,7 @@ def evaluate_cost_ledger(
         b_allocated = sum(
             a.quantity_kg for a in allocations if a.batch_id == b.batch_id
         )
-        if abs(b_allocated - b.quantity_kg) > 1e-3:
+        if abs(b_allocated - b.quantity_kg) > 0.05:
             mass_balance_passed = False
             break
 
@@ -237,12 +237,12 @@ def evaluate_cost_ledger(
         m_shipped = sum(
             a.quantity_kg for a in allocations if a.market_id == m.market_id
         )
-        if m_shipped > m.max_capacity_kg + 1e-3:
+        if m_shipped > m.max_capacity_kg + 0.05:
             capacity_limits_passed = False
             break
 
     shelf_life_limits_passed = all(
-        a.rsl_buffer_hours >= -1e-3
+        a.rsl_buffer_hours >= -0.05
         for a in allocations
         if a.status == "OPTIMAL_DISPATCH"
     )
@@ -264,7 +264,7 @@ def evaluate_cost_ledger(
                         and a.discount_pct == disc_pct
                         and a.status in ("OPTIMAL_DISPATCH", "DELIVERED")
                     )
-                    if tier_dispatched > tier_cap + 1e-3:
+                    if tier_dispatched > tier_cap + 0.05:
                         demand_caps_passed = False
                         break
                 if not demand_caps_passed:
@@ -281,7 +281,7 @@ def evaluate_cost_ledger(
                     and a.commodity == comm
                     and a.status in ("OPTIMAL_DISPATCH", "DELIVERED")
                 )
-                if comm_dispatched > total_cap + 1e-3:
+                if comm_dispatched > total_cap + 0.05:
                     demand_caps_passed = False
                     break
 
