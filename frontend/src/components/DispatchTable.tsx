@@ -305,7 +305,7 @@ export const DispatchTable: React.FC<DispatchTableProps> = ({ response }) => {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search batch, mandi, commodity, or rationale..."
+            placeholder="Search batch, mandi, commodity..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full tactile-slider-track rounded-lg pl-9 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-white/30"

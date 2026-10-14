@@ -165,35 +165,35 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
   return (
     <div className="tactile-debossed rounded-2xl shadow-xl overflow-hidden flex flex-col h-full relative">
       {/* Map Header Bar */}
-      <div className="px-5 py-4 border-b border-white/[0.06] bg-[#111418] flex flex-wrap items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-2.5">
+      <div className="px-5 py-3.5 border-b border-white/[0.06] bg-[#111418] flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-8 h-8 rounded-lg tactile-extruded flex items-center justify-center text-white shrink-0">
             <Truck className="w-4 h-4 text-white" />
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h2 className="text-sm font-space font-bold text-white tracking-tight">
-                South India Cold-Chain Logistics Corridors
+              <h2 className="text-sm font-space font-bold text-white tracking-tight truncate">
+                South India Logistics Corridors
               </h2>
-              <span className="text-[10px] px-2 py-0.5 rounded-full tactile-debossed text-white font-mono font-medium">
+              <span className="text-[10px] px-2 py-0.5 rounded-full tactile-debossed text-white font-mono font-medium shrink-0">
                 Kolar Hub Origin
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 font-mono">
-              Arrhenius Q₁₀=2.0 thermal safety margins & reefer corridor telemetry
+            <p className="text-[11px] text-slate-400 font-mono truncate">
+              Arrhenius Q₁₀=2.0 thermal safety margins & telemetry
             </p>
           </div>
         </div>
 
         {/* Route Status Summary Badges */}
-        <div className="flex items-center gap-2 text-xs font-mono">
+        <div className="flex items-center gap-2 text-xs font-mono shrink-0">
           <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md tactile-extruded text-white">
             <span className="w-2 h-2 rounded-full bg-white shadow-[0_0_6px_#ffffff]" />
             {safeRoutes} Safe
           </span>
           <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md tactile-pressed text-slate-300 border border-white/10">
             <span className="w-2 h-2 rounded-full bg-slate-400" />
-            {warningRoutes} Tight Margin
+            {warningRoutes} Tight
           </span>
           {blockedRoutes > 0 && (
             <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md tactile-debossed text-slate-500">
@@ -210,14 +210,14 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
           center={[13.4, 78.2]}
           zoom={6}
           scrollWheelZoom={false}
-          className="w-full h-full z-0"
+          className="w-full h-full z-0 dark-map-container"
           style={{ background: '#0b0e12' }}
         >
-          {/* Dark Mode Basemap Tiles */}
+          {/* Watermark-Free Dark Tiles via OpenStreetMap with CSS Invert Filter */}
           <TileLayer
-            attribution='&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-            subdomains="abcd"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            className="dark-map-tiles"
             maxZoom={19}
           />
 
@@ -292,7 +292,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Active Outbound Corridors:</span>
+                    <span className="text-slate-400">Active Corridors:</span>
                     <span className="text-white font-semibold">{marketAggregations.length} APMC Mandis</span>
                   </div>
                 </div>
@@ -533,9 +533,9 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
         </MapContainer>
 
         {/* Floating Interactive Map Legend */}
-        <div className="absolute bottom-4 right-4 z-10 tactile-debossed bg-[#111418]/95 backdrop-blur-md rounded-xl p-3 shadow-2xl text-xs max-w-xs space-y-2 pointer-events-auto border border-white/[0.08]">
+        <div className="absolute bottom-4 right-4 z-10 tactile-debossed bg-[#111418]/95 backdrop-blur-md rounded-xl p-3 shadow-2xl text-xs max-w-[240px] space-y-2 pointer-events-auto border border-white/[0.08]">
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between pb-1 border-b border-white/[0.06] font-mono">
-            <span>Thermal Corridor Legend</span>
+            <span>Corridor Legend</span>
             <span className="text-slate-500 text-[9px]">Q₁₀ Arrhenius</span>
           </div>
 
@@ -543,28 +543,28 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
             <div className="flex items-center gap-2">
               <span className="w-5 h-1 rounded-full bg-white shadow-[0_0_6px_#ffffff] shrink-0" />
               <span className="text-slate-300">
-                Safe Buffer (<strong className="text-white font-mono">≥ 12h</strong> margin)
+                Safe Buffer (<strong className="text-white font-mono">≥ 12h</strong>)
               </span>
             </div>
 
             <div className="flex items-center gap-2">
               <span className="w-5 h-1 rounded-full bg-slate-400 shrink-0" />
               <span className="text-slate-300">
-                Tight Margin (<strong className="text-slate-200 font-mono">0–12h</strong> / Markdown Rescue)
+                Tight (<strong className="text-slate-200 font-mono">0–12h</strong> / Markdown)
               </span>
             </div>
 
             <div className="flex items-center gap-2">
               <span className="w-5 h-1 border-b-2 border-dashed border-slate-600 shrink-0" />
               <span className="text-slate-400">
-                Blocked Corridor (Decay / Deficit)
+                Blocked (Decay / Deficit)
               </span>
             </div>
 
             <div className="flex items-center gap-2 pt-1 border-t border-white/[0.06]">
               <span className="w-2.5 h-2.5 rounded-full bg-white ring-2 ring-slate-700 shrink-0" />
               <span className="text-slate-300 font-medium">
-                Origin Packinghouse (Kolar)
+                Origin Hub (Kolar)
               </span>
             </div>
           </div>

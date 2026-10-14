@@ -265,7 +265,7 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ response }) => {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={costModelData}
-                margin={{ top: 10, right: 10, left: -15, bottom: 25 }}
+                margin={{ top: 10, right: 10, left: -15, bottom: 35 }}
                 barGap={4}
               >
                 <CartesianGrid
@@ -276,9 +276,9 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ response }) => {
                 <XAxis
                   dataKey="metric"
                   stroke="#64748b"
-                  tick={{ fill: '#94a3b8', fontSize: 11, fontFamily: 'JetBrains Mono' }}
+                  tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'JetBrains Mono' }}
                   interval={0}
-                  angle={-12}
+                  angle={-15}
                   textAnchor="end"
                 />
                 <YAxis
@@ -390,7 +390,7 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ response }) => {
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart
                 data={monte_carlo_summary}
-                margin={{ top: 10, right: 10, left: -15, bottom: 10 }}
+                margin={{ top: 10, right: 10, left: -15, bottom: 25 }}
               >
                 <defs>
                   <linearGradient id="whiteArea" x1="0" y1="0" x2="0" y2="1">
@@ -410,7 +410,7 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ response }) => {
                   label={{
                     value: 'Stochastic Simulation Trials (1 to 30)',
                     position: 'insideBottom',
-                    offset: -5,
+                    offset: -12,
                     fill: '#64748b',
                     fontSize: 10,
                     fontFamily: 'JetBrains Mono',

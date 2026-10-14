@@ -131,6 +131,11 @@
   font-family: inherit;
 }
 
+/* Inverted Dark-mode Map Tiles for Watermark-free OpenStreetMap */
+.dark-map-container .leaflet-tile {
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.2) brightness(0.7);
+}
+
 /* Leaflet Dark Neumorphic Overrides */
 .leaflet-popup-content-wrapper {
   background: #15191f !important;
