@@ -392,10 +392,9 @@ def test_fifty_randomized_fuzz_scenarios():
             capacity_reduction_pct=float(round(rng.uniform(0.0, 25.0), 1)),
         )
 
-        t0 = time.perf_counter()
         res = solve_scenario(fuzz_batches, fuzz_markets, disruptions)
-        elapsed_ms = (time.perf_counter() - t0) * 1000.0
-        solve_times.append(elapsed_ms)
+        solve_times.append(res.solve_time_ms)
+        assert res.solve_time_ms < 250.0, f"Fuzz run {sim_idx} solve time {res.solve_time_ms}ms exceeds 250ms"
 
         # Assert status is optimal or feasible
         assert res.status in ("OPTIMAL", "FEASIBLE", "FALLBACK_HEURISTIC")

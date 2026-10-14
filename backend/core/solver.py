@@ -1081,7 +1081,7 @@ def solve_scenario(
 
     return OptimizeResponse(
         status=solver_status,
-        solve_time_ms=total_solve_time_ms,
+        solve_time_ms=opt_res.solve_time_ms,
         batches=disrupted_batches,
         markets=disrupted_markets,
         disruptions=req_disruptions,
