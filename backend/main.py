@@ -125,6 +125,7 @@ def root():
 
 # 2. GET /api/v1/health (5.1 in SHARED_API_CONTRACT.md)
 @app.get("/api/v1/health")
+@app.get("/health")
 def get_health() -> dict[str, str]:
     """Instant readiness probe for frontend connection indicator."""
     return {
@@ -136,6 +137,7 @@ def get_health() -> dict[str, str]:
 
 # 3. GET /api/v1/default-scenario (5.2 in SHARED_API_CONTRACT.md)
 @app.get("/api/v1/default-scenario", response_model=OptimizeResponse)
+@app.get("/default-scenario", response_model=OptimizeResponse)
 def get_default_scenario() -> OptimizeResponse:
     """Loads default MoFPI South India perishable produce dataset and initial solved state."""
     batches = get_default_batches()
@@ -152,6 +154,7 @@ def get_default_scenario() -> OptimizeResponse:
 
 # 4. POST /api/v1/optimize (5.3 in SHARED_API_CONTRACT.md)
 @app.post("/api/v1/optimize", response_model=OptimizeResponse)
+@app.post("/optimize", response_model=OptimizeResponse)
 def optimize_scenario(request: OptimizeRequest) -> OptimizeResponse:
     """
     Re-solves both the Naive FIFO Baseline and the FreshRoute MILP Optimizer
@@ -342,6 +345,7 @@ def _parse_csv_bytes(content: bytes) -> list[dict[str, Any]]:
 
 # 5. POST /api/v1/upload-dataset (5.4 in SHARED_API_CONTRACT.md)
 @app.post("/api/v1/upload-dataset", response_model=OptimizeResponse)
+@app.post("/upload-dataset", response_model=OptimizeResponse)
 async def upload_dataset(
     scenario_file: UploadFile | None = File(None),  # noqa: B008
     batches_file: UploadFile | None = File(None),  # noqa: B008

@@ -4,11 +4,15 @@ import {
   simulateFallbackOptimize,
 } from "../mocks/fallbackData";
 
-export const API_BASE_URL: string =
+const rawBaseUrl =
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ||
   (import.meta.env.DEV
     ? "http://localhost:8000/api/v1"
     : "https://perishopt-backend.onrender.com/api/v1");
+
+export const API_BASE_URL: string = rawBaseUrl.endsWith("/api/v1")
+  ? rawBaseUrl
+  : `${rawBaseUrl.replace(/\/+$/, "")}/api/v1`;
 
 const DEFAULT_TIMEOUT_MS = 30000; // 30s to accommodate Render free-tier spin-up
 const UPLOAD_TIMEOUT_MS = 45000;  // 45s for file uploads and heavy MILP solves
