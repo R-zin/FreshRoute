@@ -244,3 +244,35 @@ def test_api_upload_dataset_json():
     # optimal_temp_c was imputed from lookup
     assert data["batches"][0]["optimal_temp_c"] == 12.0
     assert len(data["ingestion_warnings"]) > 0
+
+
+def test_api_upload_dataset_corrupt_scenario_4():
+    """Verify POST /api/v1/upload-dataset with corrupt judge scenario 4 CSVs."""
+    import pathlib
+    datasets_dir = pathlib.Path(__file__).parent.parent / "datasets"
+    b_path = datasets_dir / "scenario_4_corrupt_batches.csv"
+    m_path = datasets_dir / "scenario_4_corrupt_markets.csv"
+
+    assert b_path.exists(), f"Missing dataset file: {b_path}"
+    assert m_path.exists(), f"Missing dataset file: {m_path}"
+
+    client = TestClient(app)
+    with open(b_path, "rb") as f_b, open(m_path, "rb") as f_m:
+        files = {
+            "batches_file": ("scenario_4_corrupt_batches.csv", f_b, "text/csv"),
+            "markets_file": ("scenario_4_corrupt_markets.csv", f_m, "text/csv"),
+        }
+        response = client.post("/api/v1/upload-dataset", files=files)
+
+    assert response.status_code == 200, f"Upload corrupt scenario failed: {response.text}"
+    data = response.json()
+    assert data["status"] in ("OPTIMAL", "FEASIBLE")
+    assert data["constraint_audit"]["mass_balance_passed"] is True
+    assert data["constraint_audit"]["capacity_limits_passed"] is True
+    assert data["constraint_audit"]["shelf_life_limits_passed"] is True
+    assert len(data["batches"]) >= 4
+    assert len(data["markets"]) >= 2
+    assert len(data["ingestion_warnings"]) > 10
+    # Verify no fallback heuristic failure
+    assert data["status"] == "OPTIMAL"
+

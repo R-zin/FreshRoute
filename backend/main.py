@@ -361,18 +361,7 @@ async def upload_dataset(
     markets: list[Market] = []
     disruptions = get_default_disruptions()
 
-    # Zero-Blocker Import Rule: Try importing Account 3's ingestion parser if available
-    try:
-        from backend.ingestion.parser import parse_uploaded_dataset  # type: ignore
-
-        return await parse_uploaded_dataset(
-            scenario_file=scenario_file,
-            batches_file=batches_file,
-            markets_file=markets_file,
-        )
-    except (ImportError, AttributeError):
-        pass
-
+    # Primary Ingestion Engine: Cleanly call backend.ingestion.parser.parse_uploaded_files
     try:
         from backend.ingestion.parser import parse_uploaded_files  # type: ignore
 
@@ -383,6 +372,16 @@ async def upload_dataset(
         m_bytes = await markets_file.read() if markets_file else None
         m_name = markets_file.filename if markets_file else None
 
+        # Extract disruptions from scenario JSON if available
+        if scen_bytes:
+            try:
+                scen_dict = json.loads(scen_bytes.decode("utf-8-sig", errors="replace"))
+                if isinstance(scen_dict, dict) and "disruptions" in scen_dict:
+                    dis_data = {_normalize_key(k): v for k, v in scen_dict["disruptions"].items()}
+                    disruptions = DisruptionOverrides(**dis_data)
+            except (json.JSONDecodeError, ValueError, KeyError, TypeError, UnicodeDecodeError):
+                pass
+
         parsed_b, parsed_m, parsed_w = parse_uploaded_files(
             scenario_bytes=scen_bytes,
             scenario_filename=scen_name,
@@ -391,9 +390,13 @@ async def upload_dataset(
             markets_bytes=m_bytes,
             markets_filename=m_name,
         )
-        if parsed_b or parsed_m:
-            batches = parsed_b or get_default_batches()
-            markets = parsed_m or get_default_markets()
+        if scenario_file or batches_file or markets_file:
+            batches = parsed_b if parsed_b else get_default_batches()
+            markets = parsed_m if parsed_m else get_default_markets()
+            if not parsed_b and not scenario_file:
+                warnings.append("No batches provided; fell back to default MoFPI batches.")
+            if not parsed_m and not scenario_file:
+                warnings.append("No markets provided; fell back to default MoFPI markets.")
             warnings.extend(parsed_w)
             return solve_scenario(
                 request=OptimizeRequest(
