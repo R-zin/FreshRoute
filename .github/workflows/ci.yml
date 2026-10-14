@@ -41,7 +41,7 @@ jobs:
         run: |
           python datasets/generate_scenarios.py
 
-      - name: Run Pytest Test Suite (25 Tests: Parser, Solver, Scenarios)
+      - name: "Run Pytest Test Suite (25 Tests: Parser, Solver, Scenarios)"
         env:
           PYTHONPATH: .
         run: |
