@@ -363,24 +363,48 @@ async def upload_dataset(
 
     # Zero-Blocker Import Rule: Try importing Account 3's ingestion parser if available
     try:
-        from backend.ingestion.parser import parse_uploaded_files  # type: ignore
+        from backend.ingestion.parser import parse_uploaded_dataset  # type: ignore
 
-        return await parse_uploaded_files(
+        return await parse_uploaded_dataset(
             scenario_file=scenario_file,
             batches_file=batches_file,
             markets_file=markets_file,
         )
     except (ImportError, AttributeError):
-        try:
-            from backend.ingestion.parser import parse_uploaded_dataset  # type: ignore
+        pass
 
-            return await parse_uploaded_dataset(
-                scenario_file=scenario_file,
-                batches_file=batches_file,
-                markets_file=markets_file,
+    try:
+        from backend.ingestion.parser import parse_uploaded_files  # type: ignore
+
+        scen_bytes = await scenario_file.read() if scenario_file else None
+        scen_name = scenario_file.filename if scenario_file else None
+        b_bytes = await batches_file.read() if batches_file else None
+        b_name = batches_file.filename if batches_file else None
+        m_bytes = await markets_file.read() if markets_file else None
+        m_name = markets_file.filename if markets_file else None
+
+        parsed_b, parsed_m, parsed_w = parse_uploaded_files(
+            scenario_bytes=scen_bytes,
+            scenario_filename=scen_name,
+            batches_bytes=b_bytes,
+            batches_filename=b_name,
+            markets_bytes=m_bytes,
+            markets_filename=m_name,
+        )
+        if parsed_b or parsed_m:
+            batches = parsed_b or get_default_batches()
+            markets = parsed_m or get_default_markets()
+            warnings.extend(parsed_w)
+            return solve_scenario(
+                request=OptimizeRequest(
+                    batches=batches,
+                    markets=markets,
+                    disruptions=disruptions,
+                ),
+                ingestion_warnings=warnings,
             )
-        except (ImportError, AttributeError):
-            pass
+    except (ImportError, AttributeError, TypeError):
+        pass
 
     # Built-in robust ingestion parser fallback
     if scenario_file is not None:
