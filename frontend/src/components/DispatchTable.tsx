@@ -3,19 +3,19 @@ import { OptimizeResponse } from '../types/api';
 import {
   Table,
   AlertTriangle,
-  XCircle,
   Search,
   Filter,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  Clock,
   Sparkles,
   ShieldCheck,
-  Percent,
-  HelpCircle,
-  Tag,
+  ChevronDown,
+  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   Store,
+  Tag,
   Package,
 } from 'lucide-react';
 
@@ -34,6 +34,8 @@ type SortField =
   | 'net_contribution';
 type SortDirection = 'asc' | 'desc';
 
+const PAGE_SIZE = 10;
+
 export const DispatchTable: React.FC<DispatchTableProps> = ({ response }) => {
   const [activeTab, setActiveTab] = useState<TabMode>('optimized');
   const [selectedCommodity, setSelectedCommodity] = useState<string>('All');
@@ -41,6 +43,9 @@ export const DispatchTable: React.FC<DispatchTableProps> = ({ response }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortField, setSortField] = useState<SortField>('net_contribution');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [expandedRowKey, setExpandedRowKey] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [showAllRows, setShowAllRows] = useState<boolean>(false);
 
   // Baseline spoiled count for the tab badge
   const baselineSpoiledCount = useMemo(() => {
@@ -145,6 +150,19 @@ export const DispatchTable: React.FC<DispatchTableProps> = ({ response }) => {
     });
   }, [filteredRows, sortField, sortDirection]);
 
+  // Pagination calculation
+  const totalPages = Math.max(1, Math.ceil(sortedRows.length / PAGE_SIZE));
+  const displayedRows = useMemo(() => {
+    if (showAllRows) return sortedRows;
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return sortedRows.slice(start, start + PAGE_SIZE);
+  }, [sortedRows, currentPage, showAllRows]);
+
+  // Reset page on filter changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCommodity, selectedTier, searchQuery, activeTab]);
+
   // Aggregate stats for filtered view
   const aggregateStats = useMemo(() => {
     const totalKg = filteredRows.reduce((sum, r) => sum + r.quantity_kg, 0);
@@ -173,72 +191,68 @@ export const DispatchTable: React.FC<DispatchTableProps> = ({ response }) => {
 
   const renderSortIndicator = (field: SortField) => {
     if (sortField !== field) {
-      return <ArrowUpDown className="w-3.5 h-3.5 opacity-40 ml-1 inline" />;
+      return <ArrowUpDown className="w-3 h-3 opacity-30 ml-1 inline" />;
     }
     return sortDirection === 'asc' ? (
-      <ArrowUp className="w-3.5 h-3.5 text-white ml-1 inline" />
+      <ArrowUp className="w-3 h-3 text-emerald-400 ml-1 inline" />
     ) : (
-      <ArrowDown className="w-3.5 h-3.5 text-white ml-1 inline" />
+      <ArrowDown className="w-3 h-3 text-emerald-400 ml-1 inline" />
     );
   };
 
+  const toggleRowExpand = (rowKey: string) => {
+    setExpandedRowKey((prev) => (prev === rowKey ? null : rowKey));
+  };
+
   return (
-    <div className="tactile-debossed rounded-2xl p-6 shadow-xl relative overflow-hidden backdrop-blur-md">
-      {/* Top Segmented Tab Toggle */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-white/[0.06]">
+    <div className="glass-panel rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+      {/* Top Segmented Tab Toggle & Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-white/[0.06]">
         <div>
-          <div className="flex items-center gap-2">
-            <Table className="w-5 h-5 text-white" />
-            <h2 className="text-lg font-space font-bold text-white tracking-tight">
-              Cold-Chain Dispatch Plan & Thermal Audit
-            </h2>
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+              <Table className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-base font-space font-bold text-white tracking-tight">
+                Dispatch Matrix & Thermal Audit
+              </h2>
+              <p className="text-[11px] text-slate-400 font-sans">
+                Algorithmic MILP allocations vs. naive FIFO baseline
+              </p>
+            </div>
           </div>
-          <p className="text-xs text-slate-400 mt-1 font-sans">
-            Compare algorithmic MILP-FEFO routing against standard naive FIFO dispatch across all APMC mandis.
-          </p>
         </div>
 
-        {/* Tab Toggle Buttons */}
-        <div className="tactile-slider-track p-1 rounded-xl flex items-center self-start lg:self-auto">
+        {/* Tab Toggle Segment */}
+        <div className="bg-[#0b0e14] p-1 rounded-xl flex items-center border border-white/[0.06] self-start lg:self-auto font-mono text-xs">
           <button
             onClick={() => setActiveTab('optimized')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold font-mono transition-all duration-200 ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg font-medium transition-all duration-150 ${
               activeTab === 'optimized'
-                ? 'bg-white text-black font-bold shadow-[0_0_12px_rgba(255,255,255,0.25)]'
+                ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-semibold shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>perishOpt MILP Optimal Dispatch Plan</span>
-            <span
-              className={`px-2 py-0.5 rounded-full text-[10px] ${
-                activeTab === 'optimized'
-                  ? 'bg-black text-white'
-                  : 'tactile-debossed text-slate-400'
-              }`}
-            >
-              {response.allocations.length} Routes
+            <span>Optimal Dispatch</span>
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-white/[0.06] text-slate-300">
+              {response.allocations.length}
             </span>
           </button>
 
           <button
             onClick={() => setActiveTab('baseline')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold font-mono transition-all duration-200 ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg font-medium transition-all duration-150 ${
               activeTab === 'baseline'
-                ? 'tactile-pressed bg-[#181d22] text-white border border-white/20'
+                ? 'bg-rose-500/15 border border-rose-500/30 text-rose-300 font-semibold shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <AlertTriangle className="w-3.5 h-3.5" />
-            <span>Baseline (Naive FIFO) Failure Audit</span>
+            <span>Baseline FIFO Audit</span>
             {baselineSpoiledCount > 0 && (
-              <span
-                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                  activeTab === 'baseline'
-                    ? 'bg-white text-black'
-                    : 'tactile-debossed text-white'
-                }`}
-              >
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300">
                 {baselineSpoiledCount} Spoiled
               </span>
             )}
@@ -247,19 +261,19 @@ export const DispatchTable: React.FC<DispatchTableProps> = ({ response }) => {
       </div>
 
       {/* Control Filters & Search Bar */}
-      <div className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/[0.06]">
+      <div className="py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/[0.06]">
         <div className="flex flex-wrap items-center gap-2">
           {/* Commodity Filter */}
-          <div className="flex items-center gap-1.5 tactile-slider-track rounded-lg px-2.5 py-1.5 text-xs font-mono">
-            <Filter className="w-3.5 h-3.5 text-slate-400" />
-            <span className="text-slate-400">Commodity:</span>
+          <div className="flex items-center gap-1.5 bg-[#0b0e14] border border-white/[0.06] rounded-lg px-2.5 py-1.5 text-xs font-mono">
+            <Filter className="w-3 h-3 text-slate-400" />
+            <span className="text-slate-400 text-[11px]">Commodity:</span>
             <select
               value={selectedCommodity}
               onChange={(e) => setSelectedCommodity(e.target.value)}
-              className="bg-transparent text-white font-medium focus:outline-none cursor-pointer"
+              className="bg-transparent text-white font-medium focus:outline-none cursor-pointer text-xs"
             >
               {availableCommodities.map((c) => (
-                <option key={c} value={c} className="bg-[#111418] text-white">
+                <option key={c} value={c} className="bg-[#0f1219] text-white">
                   {c}
                 </option>
               ))}
@@ -267,33 +281,24 @@ export const DispatchTable: React.FC<DispatchTableProps> = ({ response }) => {
           </div>
 
           {/* Pricing Tier Filter */}
-          <div className="flex items-center gap-1.5 tactile-slider-track rounded-lg px-2.5 py-1.5 text-xs font-mono">
-            <Percent className="w-3.5 h-3.5 text-slate-400" />
-            <span className="text-slate-400">Discount Tier:</span>
+          <div className="flex items-center gap-1.5 bg-[#0b0e14] border border-white/[0.06] rounded-lg px-2.5 py-1.5 text-xs font-mono">
+            <Tag className="w-3 h-3 text-slate-400" />
+            <span className="text-slate-400 text-[11px]">Tier:</span>
             <select
               value={selectedTier}
               onChange={(e) => setSelectedTier(e.target.value)}
-              className="bg-transparent text-white font-medium focus:outline-none cursor-pointer"
+              className="bg-transparent text-white font-medium focus:outline-none cursor-pointer text-xs"
             >
-              <option value="All" className="bg-[#111418] text-white">
+              <option value="All" className="bg-[#0f1219] text-white">
                 All Tiers
               </option>
-              <option
-                value="0% Full Price"
-                className="bg-[#111418] text-white"
-              >
+              <option value="0% Full Price" className="bg-[#0f1219] text-white">
                 0% Full Price
               </option>
-              <option
-                value="15% Markdown"
-                className="bg-[#111418] text-white"
-              >
+              <option value="15% Markdown" className="bg-[#0f1219] text-white">
                 15% Markdown
               </option>
-              <option
-                value="30% Clearance"
-                className="bg-[#111418] text-white"
-              >
+              <option value="30% Clearance" className="bg-[#0f1219] text-white">
                 30% Clearance
               </option>
             </select>
@@ -301,14 +306,14 @@ export const DispatchTable: React.FC<DispatchTableProps> = ({ response }) => {
         </div>
 
         {/* Search Input */}
-        <div className="relative min-w-[260px]">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        <div className="relative min-w-[220px] sm:min-w-[260px]">
+          <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search batch, mandi, commodity..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full tactile-slider-track rounded-lg pl-9 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-white/30"
+            className="w-full bg-[#0b0e14] border border-white/[0.06] rounded-lg pl-9 pr-7 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/40"
           />
           {searchQuery && (
             <button
@@ -321,26 +326,26 @@ export const DispatchTable: React.FC<DispatchTableProps> = ({ response }) => {
         </div>
       </div>
 
-      {/* Aggregate Stats Bar */}
-      <div className="py-3 px-4 tactile-extruded rounded-xl my-4 flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-1.5">
-            <span className="text-slate-400">Matching Routes:</span>
+      {/* Aggregate Stats Summary Ribbon */}
+      <div className="py-2.5 px-3.5 bg-white/[0.02] border border-white/[0.05] rounded-xl my-3 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+          <div className="flex items-center gap-1.5 text-slate-400">
+            <span>Showing:</span>
             <span className="font-bold text-white">
-              {filteredRows.length} / {rawRows.length}
+              {filteredRows.length} of {rawRows.length} routes
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5">
-            <span className="text-slate-400">Total Volume:</span>
+          <div className="flex items-center gap-1.5 text-slate-400">
+            <span>Volume:</span>
             <span className="font-bold text-white">
               {aggregateStats.totalKg.toLocaleString('en-IN')} kg
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5">
-            <span className="text-slate-400">Net Financial Return:</span>
-            <span className="font-bold text-white">
+          <div className="flex items-center gap-1.5 text-slate-400">
+            <span>Net Return:</span>
+            <span className="font-bold text-emerald-400">
               {aggregateStats.totalNet >= 0 ? '+' : ''}₹
               {aggregateStats.totalNet.toLocaleString('en-IN', {
                 maximumFractionDigits: 0,
@@ -350,232 +355,260 @@ export const DispatchTable: React.FC<DispatchTableProps> = ({ response }) => {
         </div>
 
         {activeTab === 'baseline' ? (
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-md tactile-pressed text-slate-200">
-            <AlertTriangle className="w-3.5 h-3.5 text-white" />
+          <div className="flex items-center gap-1.5 text-rose-300">
+            <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
             <span>
-              Baseline FIFO Failures: <strong className="text-white">{aggregateStats.spoiledCount}</strong> routes ({aggregateStats.spoiledKg.toLocaleString('en-IN')} kg spoiled)
+              {aggregateStats.spoiledCount} Spoilage Failures ({aggregateStats.spoiledKg.toLocaleString('en-IN')} kg)
             </span>
           </div>
         ) : (
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-md tactile-debossed text-white">
-            <ShieldCheck className="w-3.5 h-3.5 text-white" />
-            <span>
-              perishOpt Guarantee: <strong>0 kg Spoilage on Arrival</strong> (FEFO Pre-Pruned)
-            </span>
+          <div className="flex items-center gap-1.5 text-emerald-300">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span>0 kg Spoilage on Arrival (Pre-Pruned)</span>
           </div>
         )}
       </div>
 
-      {/* Table Container */}
-      <div className="overflow-x-auto rounded-xl border border-white/[0.04] shadow-sm bg-[#0e1115]">
-        <table className="w-full text-left border-collapse min-w-[950px]">
+      {/* Scannable Data Table */}
+      <div className="overflow-x-auto rounded-xl border border-white/[0.06] bg-[#0c0f17]">
+        <table className="w-full text-left border-collapse min-w-[850px]">
           <thead>
-            <tr className="bg-[#0b0e12] border-b border-white/[0.06] text-[11px] font-mono font-semibold text-slate-400 uppercase tracking-wider">
+            <tr className="bg-[#08090d] border-b border-white/[0.06] text-[11px] font-mono font-medium text-slate-400 uppercase tracking-wider">
               <th
                 onClick={() => handleSort('batch_id')}
-                className="py-3 px-4 cursor-pointer hover:text-white transition-colors select-none"
+                className="py-3 px-3.5 cursor-pointer hover:text-white transition-colors select-none"
               >
-                Batch & Commodity {renderSortIndicator('batch_id')}
+                Batch / Commodity {renderSortIndicator('batch_id')}
               </th>
               <th
                 onClick={() => handleSort('market_name')}
-                className="py-3 px-4 cursor-pointer hover:text-white transition-colors select-none"
+                className="py-3 px-3.5 cursor-pointer hover:text-white transition-colors select-none"
               >
-                Destination Market {renderSortIndicator('market_name')}
+                Destination {renderSortIndicator('market_name')}
               </th>
               <th
                 onClick={() => handleSort('quantity_kg')}
-                className="py-3 px-4 cursor-pointer hover:text-white transition-colors select-none text-right"
+                className="py-3 px-3.5 cursor-pointer hover:text-white transition-colors select-none text-right"
               >
-                Quantity (kg) {renderSortIndicator('quantity_kg')}
+                Quantity {renderSortIndicator('quantity_kg')}
               </th>
               <th
                 onClick={() => handleSort('discount_pct')}
-                className="py-3 px-4 cursor-pointer hover:text-white transition-colors select-none text-center"
+                className="py-3 px-3.5 cursor-pointer hover:text-white transition-colors select-none text-center"
               >
-                Pricing / Markdown Tier {renderSortIndicator('discount_pct')}
+                Pricing Tier {renderSortIndicator('discount_pct')}
               </th>
               <th
                 onClick={() => handleSort('rsl_buffer_hours')}
-                className="py-3 px-4 cursor-pointer hover:text-white transition-colors select-none"
+                className="py-3 px-3.5 cursor-pointer hover:text-white transition-colors select-none"
               >
-                Thermal RSL Buffer {renderSortIndicator('rsl_buffer_hours')}
+                Thermal Buffer {renderSortIndicator('rsl_buffer_hours')}
               </th>
               <th
                 onClick={() => handleSort('net_contribution')}
-                className="py-3 px-4 cursor-pointer hover:text-white transition-colors select-none text-right"
+                className="py-3 px-3.5 cursor-pointer hover:text-white transition-colors select-none text-right"
               >
-                Net Contribution (₹) {renderSortIndicator('net_contribution')}
+                Net Return {renderSortIndicator('net_contribution')}
               </th>
-              <th className="py-3 px-4 min-w-[320px]">
-                Explainable Decision Rationale (AI/MILP Audit)
+              <th className="py-3 px-3.5 text-right w-24">
+                Details
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/[0.04] text-xs font-sans">
-            {sortedRows.length === 0 ? (
+            {displayedRows.length === 0 ? (
               <tr>
                 <td colSpan={7} className="py-12 text-center text-slate-400">
                   <Package className="w-8 h-8 text-slate-600 mx-auto mb-2" />
                   <p className="text-sm font-medium text-slate-300 font-space">
-                    No dispatch allocations match the selected filters.
+                    No dispatch allocations match the filters.
                   </p>
                   <p className="text-xs text-slate-500 mt-1 font-mono">
                     Try clearing the search query or selecting "All" commodities.
                   </p>
-                  <button
-                    onClick={() => {
-                      setSelectedCommodity('All');
-                      setSelectedTier('All');
-                      setSearchQuery('');
-                    }}
-                    className="mt-3 px-3 py-1.5 rounded-lg tactile-extruded text-xs text-white font-medium transition-colors"
-                  >
-                    Reset All Filters
-                  </button>
                 </td>
               </tr>
             ) : (
-              sortedRows.map((row, idx) => {
+              displayedRows.map((row, idx) => {
+                const rowKey = `${row.batch_id}-${row.market_id}-${row.discount_pct}-${idx}`;
+                const isExpanded = expandedRowKey === rowKey;
                 const isSpoiled =
                   row.status === 'SPOILED_ON_ARRIVAL' ||
                   row.rsl_buffer_hours < 0;
 
                 return (
-                  <tr
-                    key={`${row.batch_id}-${row.market_id}-${row.discount_pct}-${idx}`}
-                    className={`transition-colors duration-150 ${
-                      isSpoiled
-                        ? 'bg-white/[0.02] hover:bg-white/[0.05]'
-                        : 'hover:bg-white/[0.03]'
-                    }`}
-                  >
-                    {/* Batch & Commodity */}
-                    <td className="py-3 px-4 whitespace-nowrap">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold text-white tactile-extruded px-2 py-0.5 rounded">
-                          {row.batch_id}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono font-semibold tactile-debossed text-slate-200">
-                          <span className="w-1.5 h-1.5 rounded-full bg-white" />
-                          {row.commodity}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* Destination Market */}
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-2">
-                        <Store className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                        <div>
-                          <div className="font-medium text-white">
-                            {row.market_name}
-                          </div>
-                          <div className="text-[10px] text-slate-500 font-mono">
-                            ID: {row.market_id}
-                          </div>
+                  <React.Fragment key={rowKey}>
+                    <tr
+                      onClick={() => toggleRowExpand(rowKey)}
+                      className={`cursor-pointer transition-colors duration-100 ${
+                        isSpoiled
+                          ? 'bg-rose-500/[0.03] hover:bg-rose-500/[0.06]'
+                          : isExpanded
+                          ? 'bg-white/[0.04]'
+                          : 'hover:bg-white/[0.02]'
+                      }`}
+                    >
+                      {/* Batch & Commodity */}
+                      <td className="py-2.5 px-3.5 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-white bg-white/[0.05] border border-white/[0.08] px-2 py-0.5 rounded text-[11px]">
+                            {row.batch_id}
+                          </span>
+                          <span className="text-slate-300 font-medium">
+                            {row.commodity}
+                          </span>
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* Quantity (kg) */}
-                    <td className="py-3 px-4 text-right whitespace-nowrap">
-                      <span className="font-mono font-bold text-white text-sm">
-                        {row.quantity_kg.toLocaleString('en-IN')}
-                      </span>
-                      <span className="text-slate-500 ml-1 text-[11px] font-mono">kg</span>
-                    </td>
+                      {/* Destination Market */}
+                      <td className="py-2.5 px-3.5">
+                        <div className="flex items-center gap-1.5">
+                          <Store className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                          <span className="font-medium text-white truncate max-w-[160px]">
+                            {row.market_name}
+                          </span>
+                        </div>
+                      </td>
 
-                    {/* Pricing / Markdown Tier */}
-                    <td className="py-3 px-4 text-center whitespace-nowrap">
-                      {row.discount_pct === 0 && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md tactile-extruded text-white font-mono font-semibold text-[11px]">
-                          0% Full Price
+                      {/* Quantity (kg) */}
+                      <td className="py-2.5 px-3.5 text-right whitespace-nowrap">
+                        <span className="font-mono font-bold text-white">
+                          {row.quantity_kg.toLocaleString('en-IN')}
                         </span>
-                      )}
-                      {row.discount_pct === 15 && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md tactile-pressed text-white border border-white/20 font-mono font-semibold text-[11px]">
-                          <Tag className="w-3 h-3 text-white" />
-                          15% Markdown
-                        </span>
-                      )}
-                      {row.discount_pct === 30 && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white text-black font-mono font-bold text-[11px] shadow-[0_0_8px_rgba(255,255,255,0.3)]">
-                          <Tag className="w-3 h-3 text-black" />
-                          30% Clearance
-                        </span>
-                      )}
-                      {row.discount_pct !== 0 &&
-                        row.discount_pct !== 15 &&
-                        row.discount_pct !== 30 && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md tactile-extruded text-white font-mono font-semibold text-[11px]">
-                            {row.discount_pct}% Discount
+                        <span className="text-slate-500 ml-1 text-[11px] font-mono">kg</span>
+                      </td>
+
+                      {/* Pricing Tier */}
+                      <td className="py-2.5 px-3.5 text-center whitespace-nowrap">
+                        {row.discount_pct === 0 && (
+                          <span className="inline-block px-2 py-0.5 rounded bg-white/[0.04] text-slate-300 font-mono text-[10px] border border-white/[0.06]">
+                            0% Full Price
                           </span>
                         )}
-                    </td>
-
-                    {/* Thermal RSL Buffer */}
-                    <td className="py-3 px-4 whitespace-nowrap">
-                      <div className="space-y-1">
-                        <div className="text-[11px] text-slate-400 flex items-center gap-1 font-mono">
-                          <Clock className="w-3 h-3 text-slate-400" />
-                          <span>
-                            {row.effective_transit_rsl_hours.toFixed(1)}h consumed
+                        {row.discount_pct === 15 && (
+                          <span className="inline-block px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 font-mono text-[10px] border border-amber-500/20 font-medium">
+                            15% Markdown
                           </span>
-                        </div>
+                        )}
+                        {row.discount_pct === 30 && (
+                          <span className="inline-block px-2 py-0.5 rounded bg-rose-500/15 text-rose-300 font-mono text-[10px] border border-rose-500/30 font-bold">
+                            30% Clearance
+                          </span>
+                        )}
+                        {row.discount_pct !== 0 &&
+                          row.discount_pct !== 15 &&
+                          row.discount_pct !== 30 && (
+                            <span className="inline-block px-2 py-0.5 rounded bg-white/[0.04] text-slate-300 font-mono text-[10px]">
+                              {row.discount_pct}% Off
+                            </span>
+                          )}
+                      </td>
 
+                      {/* Thermal RSL Buffer */}
+                      <td className="py-2.5 px-3.5 whitespace-nowrap">
                         {row.rsl_buffer_hours >= 5 ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono font-semibold tactile-extruded text-white">
-                            +{row.rsl_buffer_hours.toFixed(1)}h buffer
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 font-mono text-[11px] font-medium border border-emerald-500/20">
+                            +{row.rsl_buffer_hours.toFixed(1)}h Safe
                           </span>
                         ) : row.rsl_buffer_hours >= 0 ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono font-semibold tactile-pressed text-slate-300">
-                            +{row.rsl_buffer_hours.toFixed(1)}h tight
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 font-mono text-[11px] font-medium border border-amber-500/20">
+                            +{row.rsl_buffer_hours.toFixed(1)}h Tight
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-white text-black animate-pulse">
-                            <XCircle className="w-3 h-3 text-black" />
-                            {row.rsl_buffer_hours.toFixed(1)}h SPOILED
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono text-[11px] font-bold border border-rose-500/30">
+                            {row.rsl_buffer_hours.toFixed(1)}h Spoiled
                           </span>
                         )}
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* Net Contribution (₹) */}
-                    <td className="py-3 px-4 text-right whitespace-nowrap">
-                      <div className="font-mono font-extrabold text-sm text-white">
-                        {row.net_contribution >= 0 ? '+' : '-'}₹
-                        {Math.abs(row.net_contribution).toLocaleString('en-IN', {
-                          maximumFractionDigits: 0,
-                        })}
-                      </div>
-                      <div className="text-[10px] text-slate-500 font-mono">
-                        {(row.net_contribution / row.quantity_kg).toFixed(1)} ₹/kg
-                      </div>
-                    </td>
+                      {/* Net Contribution (₹) */}
+                      <td className="py-2.5 px-3.5 text-right whitespace-nowrap font-mono">
+                        <span
+                          className={`font-bold ${
+                            row.net_contribution >= 0
+                              ? 'text-white'
+                              : 'text-rose-400'
+                          }`}
+                        >
+                          {row.net_contribution >= 0 ? '+' : '-'}₹
+                          {Math.abs(row.net_contribution).toLocaleString('en-IN', {
+                            maximumFractionDigits: 0,
+                          })}
+                        </span>
+                      </td>
 
-                    {/* Explainable Decision Rationale (AI/MILP Audit) */}
-                    <td className="py-3 px-4">
-                      <div className="p-2.5 rounded-lg tactile-debossed text-[11px] leading-relaxed text-slate-300 border border-white/[0.02]">
-                        <div className="flex items-center gap-1.5 mb-1">
-                          <span
-                            className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold uppercase tracking-wider ${
-                              row.status === 'OPTIMAL_DISPATCH'
-                                ? 'bg-white text-black'
-                                : row.status === 'SPOILED_ON_ARRIVAL'
-                                ? 'tactile-pressed text-white border border-white/20'
-                                : 'tactile-extruded text-slate-400'
-                            }`}
-                          >
-                            {row.status}
-                          </span>
-                        </div>
-                        <p className="text-slate-300 font-normal">
-                          {row.reason}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
+                      {/* Expand / Details Toggle Button */}
+                      <td className="py-2.5 px-3.5 text-right whitespace-nowrap">
+                        <button
+                          type="button"
+                          className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-white px-2 py-1 rounded bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.05] transition-colors"
+                        >
+                          <span>{isExpanded ? 'Hide' : 'Audit'}</span>
+                          {isExpanded ? (
+                            <ChevronUp className="w-3 h-3" />
+                          ) : (
+                            <ChevronDown className="w-3 h-3" />
+                          )}
+                        </button>
+                      </td>
+                    </tr>
+
+                    {/* Expandable Accordion Row for Decision Rationale */}
+                    {isExpanded && (
+                      <tr className="bg-white/[0.02]">
+                        <td colSpan={7} className="p-3.5 sm:px-6">
+                          <div className="bg-[#08090d] border border-white/[0.06] rounded-xl p-3.5 space-y-2 text-xs">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                <Sparkles className="w-3 h-3 text-emerald-400" />
+                                Mathematical Decision Audit (SciPy HiGHS)
+                              </span>
+                              <span
+                                className={`text-[10px] font-mono px-2 py-0.5 rounded ${
+                                  row.status === 'OPTIMAL_DISPATCH'
+                                    ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20'
+                                    : 'bg-rose-500/10 text-rose-300 border border-rose-500/20'
+                                }`}
+                              >
+                                Status: {row.status}
+                              </span>
+                            </div>
+
+                            <p className="text-slate-300 leading-relaxed font-sans">
+                              {row.reason}
+                            </p>
+
+                            <div className="pt-2 border-t border-white/[0.04] grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono text-slate-400">
+                              <div>
+                                Transit Time Consumed:{' '}
+                                <span className="text-white font-bold">
+                                  {row.effective_transit_rsl_hours.toFixed(1)}h
+                                </span>
+                              </div>
+                              <div>
+                                Unit Return:{' '}
+                                <span className="text-white font-bold">
+                                  {(row.net_contribution / row.quantity_kg).toFixed(1)} ₹/kg
+                                </span>
+                              </div>
+                              <div>
+                                Batch ID:{' '}
+                                <span className="text-white font-bold">
+                                  {row.batch_id}
+                                </span>
+                              </div>
+                              <div>
+                                Target APMC:{' '}
+                                <span className="text-white font-bold">
+                                  {row.market_name}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 );
               })
             )}
@@ -583,19 +616,41 @@ export const DispatchTable: React.FC<DispatchTableProps> = ({ response }) => {
         </table>
       </div>
 
-      {/* Table Footer Summary Note */}
-      <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-400 gap-2 px-1">
-        <div className="flex items-center gap-1.5">
-          <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
+      {/* Pagination & View Controls */}
+      <div className="mt-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400 font-mono">
+        <div className="flex items-center gap-2">
           <span>
-            {activeTab === 'optimized'
-              ? 'MILP allocates batches based on biological decay rate, cold-chain transport costs, and demand expansion elasticity.'
-              : 'Naive FIFO prioritizes batch age without evaluating Arrhenius transit temperature rise, leading to catastrophic destination spoilage.'}
+            Showing {displayedRows.length} of {filteredRows.length} records
           </span>
+          <button
+            onClick={() => setShowAllRows((prev) => !prev)}
+            className="text-[11px] underline text-slate-300 hover:text-white ml-2 cursor-pointer"
+          >
+            {showAllRows ? 'Show Paginated (10/page)' : 'Show All'}
+          </button>
         </div>
-        <div className="text-slate-500 font-mono text-[11px] shrink-0">
-          Showing {sortedRows.length} of {rawRows.length} dispatch rows
-        </div>
+
+        {!showAllRows && totalPages > 1 && (
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="p-1 rounded bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed text-slate-300"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="px-2">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="p-1 rounded bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed text-slate-300"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

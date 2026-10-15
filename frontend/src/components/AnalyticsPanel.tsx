@@ -18,8 +18,6 @@ import {
   Activity,
   ShieldCheck,
   ArrowUpRight,
-  Sparkles,
-  Info,
 } from 'lucide-react';
 
 export interface AnalyticsPanelProps {
@@ -48,36 +46,35 @@ const CostModelCustomTooltip: React.FC<CustomTooltipProps> = ({
     const diff = perishOptVal - baselineVal;
 
     return (
-      <div className="tactile-extruded p-3.5 rounded-xl border border-white/10 text-xs font-sans space-y-2 min-w-[220px]">
-        <div className="font-bold text-white border-b border-white/[0.08] pb-1.5 flex items-center justify-between font-space">
-          <span>{label}</span>
-          <span className="text-[10px] text-slate-400 font-mono">Shared Ledger</span>
+      <div className="bg-[#0f1219]/95 backdrop-blur-md p-3 rounded-xl border border-white/10 text-xs shadow-xl min-w-[200px] space-y-1.5">
+        <div className="font-bold text-white border-b border-white/[0.08] pb-1 font-space">
+          {label}
         </div>
 
-        <div className="space-y-1.5 font-mono">
-          <div className="flex items-center justify-between text-slate-300">
-            <span className="flex items-center gap-1.5 text-slate-400">
-              <span className="w-2.5 h-2.5 rounded bg-slate-600" />
-              <span>Baseline (FIFO):</span>
+        <div className="space-y-1 font-mono text-[11px]">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded bg-slate-500" />
+              <span>Baseline FIFO:</span>
             </span>
-            <span className="font-medium text-slate-300">
+            <span className="text-slate-300 font-medium">
               ₹{baselineVal.toLocaleString('en-IN')}
             </span>
           </div>
 
-          <div className="flex items-center justify-between text-white">
+          <div className="flex items-center justify-between text-emerald-300">
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded bg-white" />
-              <span className="font-medium text-white">perishOpt MILP:</span>
+              <span className="w-2 h-2 rounded bg-emerald-400" />
+              <span>perishOpt MILP:</span>
             </span>
             <span className="font-bold text-white">
               ₹{perishOptVal.toLocaleString('en-IN')}
             </span>
           </div>
 
-          <div className="pt-1.5 border-t border-white/[0.08] flex items-center justify-between text-[11px]">
-            <span className="text-slate-400">MILP Delta:</span>
-            <span className="font-bold text-white">
+          <div className="pt-1 border-t border-white/[0.08] flex items-center justify-between text-[11px]">
+            <span className="text-slate-400">Net Delta:</span>
+            <span className={`font-bold ${diff >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
               {diff >= 0 ? '+' : ''}₹{diff.toLocaleString('en-IN')}
             </span>
           </div>
@@ -99,17 +96,17 @@ const MonteCarloCustomTooltip: React.FC<CustomTooltipProps> = ({
     const alpha = pRev - bRev;
 
     return (
-      <div className="tactile-extruded p-3.5 rounded-xl border border-white/10 text-xs font-sans space-y-2 min-w-[240px]">
-        <div className="font-bold text-white border-b border-white/[0.08] pb-1.5 flex items-center justify-between font-space">
-          <span>Stochastic Trial #{label}</span>
-          <span className="text-[10px] text-white font-mono">±20% Noise Bound</span>
+      <div className="bg-[#0f1219]/95 backdrop-blur-md p-3 rounded-xl border border-white/10 text-xs shadow-xl min-w-[220px] space-y-1.5">
+        <div className="font-bold text-white border-b border-white/[0.08] pb-1 font-space flex items-center justify-between">
+          <span>Simulation #{label}</span>
+          <span className="text-[10px] text-emerald-400 font-mono">±20% Noise</span>
         </div>
 
-        <div className="space-y-1.5 font-mono">
-          <div className="flex items-center justify-between text-white">
+        <div className="space-y-1 font-mono text-[11px]">
+          <div className="flex items-center justify-between text-emerald-300">
             <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-white shadow-[0_0_6px_#ffffff]" />
-              <span>perishOpt Net Rev:</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" />
+              <span>perishOpt Net:</span>
             </span>
             <span className="font-bold text-white">
               ₹{pRev.toLocaleString('en-IN')}
@@ -119,16 +116,16 @@ const MonteCarloCustomTooltip: React.FC<CustomTooltipProps> = ({
           <div className="flex items-center justify-between text-slate-400">
             <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-slate-500" />
-              <span>Baseline Net Rev:</span>
+              <span>Baseline Net:</span>
             </span>
-            <span className="font-semibold text-slate-300">
+            <span className="font-medium text-slate-300">
               ₹{bRev.toLocaleString('en-IN')}
             </span>
           </div>
 
-          <div className="pt-1.5 border-t border-white/[0.08] flex items-center justify-between text-[11px]">
-            <span className="text-slate-400">Resilience Advantage:</span>
-            <span className="font-bold text-white">
+          <div className="pt-1 border-t border-white/[0.08] flex items-center justify-between text-[11px]">
+            <span className="text-slate-400">Resilience Alpha:</span>
+            <span className="font-bold text-emerald-400">
               +₹{alpha.toLocaleString('en-IN')}
             </span>
           </div>
@@ -152,20 +149,20 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ response }) => {
         perishopt: kpis.optimized.gross_revenue,
       },
       {
-        metric: 'Freight/Handling',
-        fullName: 'Transport & Handling Cost',
+        metric: 'Freight',
+        fullName: 'Transport Cost',
         baseline: kpis.baseline.transport_handling_cost,
         perishopt: kpis.optimized.transport_handling_cost,
       },
       {
-        metric: 'Markdown Inv.',
+        metric: 'Markdowns',
         fullName: 'Markdown Investment',
         baseline: kpis.baseline.discount_cost,
         perishopt: kpis.optimized.discount_cost,
       },
       {
-        metric: 'Spoilage Penalty',
-        fullName: 'Spoilage Penalty Cost',
+        metric: 'Spoilage',
+        fullName: 'Spoilage Loss Penalty',
         baseline: kpis.baseline.spoilage_cost,
         perishopt: kpis.optimized.spoilage_cost,
       },
@@ -204,85 +201,77 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ response }) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* =========================================================================
-          CHART 1 (Left): Shared Economic Cost Model Comparison
+          CHART 1 (Left): Economic Cost Model Comparison
          ========================================================================= */}
-      <div className="tactile-debossed rounded-2xl p-5 sm:p-6 shadow-xl flex flex-col justify-between relative overflow-hidden backdrop-blur-md group">
+      <div className="glass-panel rounded-2xl p-5 sm:p-6 shadow-xl flex flex-col justify-between">
         <div>
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/[0.06] gap-2">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl tactile-extruded flex items-center justify-center text-white shrink-0">
-                <BarChart3 className="w-5 h-5 text-white" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-white/[0.06] gap-2">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                <BarChart3 className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-space font-bold text-white tracking-tight flex items-center gap-2">
-                  Shared Economic Cost Model Comparison
+                <h3 className="text-sm sm:text-base font-space font-bold text-white tracking-tight">
+                  Economic P&L Audit
                 </h3>
-                <p className="text-xs text-slate-400 font-sans">
-                  Side-by-side P&L audit: Naive FIFO Baseline vs. perishOpt MILP
+                <p className="text-[11px] text-slate-400 font-sans">
+                  Naive FIFO Baseline vs. perishOpt MILP
                 </p>
               </div>
             </div>
 
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full tactile-extruded text-white text-xs font-mono font-semibold self-start sm:self-auto">
-              <ArrowUpRight className="w-3.5 h-3.5 text-white" />
-              <span>+₹{kpis.deltas.net_revenue_gain.toLocaleString('en-IN')} Net Gain</span>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-mono font-medium self-start sm:self-auto">
+              <ArrowUpRight className="w-3.5 h-3.5" />
+              <span>+₹{kpis.deltas.net_revenue_gain.toLocaleString('en-IN')} Alpha</span>
             </div>
           </div>
 
-          {/* Key Insight Mini-Bar */}
-          <div className="grid grid-cols-3 gap-2 my-4 text-center">
-            <div className="tactile-debossed p-2.5 rounded-xl border border-white/[0.04]">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-mono">
-                Baseline FIFO Net
-              </span>
-              <span className="text-xs sm:text-sm font-extrabold font-mono text-slate-300">
-                ₹{kpis.baseline.net_revenue.toLocaleString('en-IN')}
+          {/* Quick Stats Pill Row */}
+          <div className="grid grid-cols-3 gap-2 my-3 text-center text-xs font-mono">
+            <div className="bg-white/[0.02] border border-white/[0.05] p-2 rounded-lg">
+              <span className="text-[10px] text-slate-400 block">Baseline Net</span>
+              <span className="font-bold text-slate-300">
+                ₹{(kpis.baseline.net_revenue / 1000).toFixed(0)}k
               </span>
             </div>
 
-            <div className="tactile-debossed p-2.5 rounded-xl border border-white/[0.04]">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-mono">
-                perishOpt MILP Net
-              </span>
-              <span className="text-xs sm:text-sm font-extrabold font-mono text-white">
-                ₹{kpis.optimized.net_revenue.toLocaleString('en-IN')}
+            <div className="bg-white/[0.02] border border-white/[0.05] p-2 rounded-lg">
+              <span className="text-[10px] text-slate-400 block">perishOpt Net</span>
+              <span className="font-bold text-emerald-400">
+                ₹{(kpis.optimized.net_revenue / 1000).toFixed(0)}k
               </span>
             </div>
 
-            <div className="tactile-debossed p-2.5 rounded-xl border border-white/[0.04]">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-mono">
-                Waste Loss Prevented
-              </span>
-              <span className="text-xs sm:text-sm font-extrabold font-mono text-white">
-                ₹{(kpis.baseline.spoilage_cost - kpis.optimized.spoilage_cost).toLocaleString('en-IN')}
+            <div className="bg-white/[0.02] border border-white/[0.05] p-2 rounded-lg">
+              <span className="text-[10px] text-slate-400 block">Waste Saved</span>
+              <span className="font-bold text-emerald-400">
+                ₹{((kpis.baseline.spoilage_cost - kpis.optimized.spoilage_cost) / 1000).toFixed(0)}k
               </span>
             </div>
           </div>
 
-          {/* Grouped Bar Chart Container */}
-          <div className="w-full h-[280px] sm:h-[300px] mt-2">
+          {/* Bar Chart Container */}
+          <div className="w-full h-[260px] sm:h-[280px] mt-2">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={costModelData}
-                margin={{ top: 10, right: 10, left: -15, bottom: 35 }}
+                margin={{ top: 10, right: 10, left: -20, bottom: 20 }}
                 barGap={4}
               >
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="#1c2024"
+                  stroke="rgba(255,255,255,0.04)"
                   vertical={false}
                 />
                 <XAxis
                   dataKey="metric"
-                  stroke="#64748b"
+                  stroke="#475569"
                   tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'JetBrains Mono' }}
                   interval={0}
-                  angle={-15}
-                  textAnchor="end"
                 />
                 <YAxis
-                  stroke="#64748b"
+                  stroke="#475569"
                   tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'JetBrains Mono' }}
                   tickFormatter={(val) => `₹${(val / 1000).toFixed(0)}k`}
                 />
@@ -290,28 +279,26 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ response }) => {
                 <Legend
                   verticalAlign="top"
                   align="right"
-                  wrapperStyle={{ paddingBottom: '10px', fontSize: '11px', fontFamily: 'JetBrains Mono' }}
+                  wrapperStyle={{ paddingBottom: '8px', fontSize: '11px', fontFamily: 'JetBrains Mono' }}
                   formatter={(value) => (
                     <span className="text-slate-300 font-medium">
-                      {value === 'baseline'
-                        ? 'Baseline (Naive FIFO)'
-                        : 'perishOpt MILP'}
+                      {value === 'baseline' ? 'Baseline FIFO' : 'perishOpt MILP'}
                     </span>
                   )}
                 />
                 <Bar
                   dataKey="baseline"
                   name="baseline"
-                  fill="#475569"
+                  fill="#64748b"
                   radius={[4, 4, 0, 0]}
-                  maxBarSize={32}
+                  maxBarSize={28}
                 />
                 <Bar
                   dataKey="perishopt"
                   name="perishopt"
-                  fill="#ffffff"
+                  fill="#10b981"
                   radius={[4, 4, 0, 0]}
-                  maxBarSize={32}
+                  maxBarSize={28}
                 />
               </BarChart>
             </ResponsiveContainer>
@@ -319,105 +306,96 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ response }) => {
         </div>
 
         {/* Footer Note */}
-        <div className="pt-3 border-t border-white/[0.06] text-[11px] text-slate-400 flex items-center justify-between font-mono">
-          <span className="flex items-center gap-1.5">
-            <Info className="w-3.5 h-3.5 text-white" />
-            <span>Markdown discounts dynamically offset high spoilage disposal costs.</span>
-          </span>
-          <span className="text-slate-500">20% Rubric Weight</span>
+        <div className="pt-2.5 border-t border-white/[0.06] text-[11px] text-slate-400 flex items-center justify-between font-mono">
+          <span>Dynamic markdowns clear perishable volume before Arrhenius spoilage decay.</span>
+          <span className="text-slate-500 text-[10px]">P&L Audit</span>
         </div>
       </div>
 
       {/* =========================================================================
-          CHART 2 (Right): 30-Run Monte Carlo Robustness & Sensitivity
+          CHART 2 (Right): Monte Carlo Robustness (30 Runs)
          ========================================================================= */}
-      <div className="tactile-debossed rounded-2xl p-5 sm:p-6 shadow-xl flex flex-col justify-between relative overflow-hidden backdrop-blur-md group">
+      <div className="glass-panel rounded-2xl p-5 sm:p-6 shadow-xl flex flex-col justify-between">
         <div>
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/[0.06] gap-2">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl tactile-extruded flex items-center justify-center text-white shrink-0">
-                <Activity className="w-5 h-5 text-white" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-white/[0.06] gap-2">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 shrink-0">
+                <Activity className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-space font-bold text-white tracking-tight flex items-center gap-2">
-                  30-Run Monte Carlo Robustness
+                <h3 className="text-sm sm:text-base font-space font-bold text-white tracking-tight">
+                  30-Run Monte Carlo Resilience
                 </h3>
-                <p className="text-xs text-slate-400 font-sans">
-                  Stochastic evaluation under ±20% transit delays & ±15% Arrhenius shelf-life noise
+                <p className="text-[11px] text-slate-400 font-sans">
+                  Stochastic trials with ±20% transit delay & ±15% thermal noise
                 </p>
               </div>
             </div>
 
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full tactile-extruded text-white text-xs font-mono font-semibold self-start sm:self-auto">
-              <ShieldCheck className="w-3.5 h-3.5 text-white" />
-              <span>{mcStats.winRatePct.toFixed(0)}% Robust Win Rate</span>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-mono font-medium self-start sm:self-auto">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>{mcStats.winRatePct.toFixed(0)}% Dominance Rate</span>
             </div>
           </div>
 
           {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-3 gap-2 my-4 text-center">
-            <div className="tactile-debossed p-2.5 rounded-xl border border-white/[0.04]">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-mono">
-                Mean Baseline Net
-              </span>
-              <span className="text-xs sm:text-sm font-extrabold font-mono text-slate-300">
-                ₹{Math.round(mcStats.avgBaseline).toLocaleString('en-IN')}
+          <div className="grid grid-cols-3 gap-2 my-3 text-center text-xs font-mono">
+            <div className="bg-white/[0.02] border border-white/[0.05] p-2 rounded-lg">
+              <span className="text-[10px] text-slate-400 block">Mean Baseline Net</span>
+              <span className="font-bold text-slate-300">
+                ₹{Math.round(mcStats.avgBaseline / 1000).toFixed(0)}k
               </span>
             </div>
 
-            <div className="tactile-debossed p-2.5 rounded-xl border border-white/[0.04]">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-mono">
-                Mean perishOpt Net
-              </span>
-              <span className="text-xs sm:text-sm font-extrabold font-mono text-white">
-                ₹{Math.round(mcStats.avgPerishopt).toLocaleString('en-IN')}
+            <div className="bg-white/[0.02] border border-white/[0.05] p-2 rounded-lg">
+              <span className="text-[10px] text-slate-400 block">Mean perishOpt Net</span>
+              <span className="font-bold text-emerald-400">
+                ₹{Math.round(mcStats.avgPerishopt / 1000).toFixed(0)}k
               </span>
             </div>
 
-            <div className="tactile-debossed p-2.5 rounded-xl border border-white/[0.04]">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-mono">
-                Avg Net Alpha
-              </span>
-              <span className="text-xs sm:text-sm font-extrabold font-mono text-white">
-                +₹{Math.round(mcStats.avgGain).toLocaleString('en-IN')}
+            <div className="bg-white/[0.02] border border-white/[0.05] p-2 rounded-lg">
+              <span className="text-[10px] text-slate-400 block">Average Alpha</span>
+              <span className="font-bold text-emerald-400">
+                +₹{Math.round(mcStats.avgGain / 1000).toFixed(0)}k
               </span>
             </div>
           </div>
 
           {/* Monte Carlo Line/Area Chart */}
-          <div className="w-full h-[280px] sm:h-[300px] mt-2">
+          <div className="w-full h-[260px] sm:h-[280px] mt-2">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart
                 data={monte_carlo_summary}
-                margin={{ top: 10, right: 10, left: -15, bottom: 25 }}
+                margin={{ top: 10, right: 10, left: -20, bottom: 20 }}
               >
                 <defs>
-                  <linearGradient id="whiteArea" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ffffff" stopOpacity={0.18} />
-                    <stop offset="95%" stopColor="#ffffff" stopOpacity={0.0} />
+                  <linearGradient id="emeraldArea" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="#1c2024"
+                  stroke="rgba(255,255,255,0.04)"
                   vertical={false}
                 />
                 <XAxis
                   dataKey="sim_id"
-                  stroke="#64748b"
+                  stroke="#475569"
                   tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'JetBrains Mono' }}
                   label={{
-                    value: 'Stochastic Simulation Trials (1 to 30)',
+                    value: 'Stochastic Trials (1 to 30)',
                     position: 'insideBottom',
-                    offset: -12,
+                    offset: -10,
                     fill: '#64748b',
                     fontSize: 10,
                     fontFamily: 'JetBrains Mono',
                   }}
                 />
                 <YAxis
-                  stroke="#64748b"
+                  stroke="#475569"
                   tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'JetBrains Mono' }}
                   tickFormatter={(val) => `₹${(val / 1000).toFixed(0)}k`}
                 />
@@ -425,34 +403,34 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ response }) => {
                 <Legend
                   verticalAlign="top"
                   align="right"
-                  wrapperStyle={{ paddingBottom: '10px', fontSize: '11px', fontFamily: 'JetBrains Mono' }}
+                  wrapperStyle={{ paddingBottom: '8px', fontSize: '11px', fontFamily: 'JetBrains Mono' }}
                   formatter={(value) => (
                     <span className="text-slate-300 font-medium">
                       {value === 'freshroute_net_rev'
-                        ? 'perishOpt MILP (Resilient)'
-                        : 'Baseline FIFO (Vulnerable)'}
+                        ? 'perishOpt MILP'
+                        : 'Baseline FIFO'}
                     </span>
                   )}
                 />
                 <Area
                   type="monotone"
                   dataKey="freshroute_net_rev"
-                  fill="url(#whiteArea)"
-                  stroke="#ffffff"
-                  strokeWidth={2.5}
+                  fill="url(#emeraldArea)"
+                  stroke="#10b981"
+                  strokeWidth={2}
                   name="freshroute_net_rev"
-                  dot={{ r: 2.5, fill: '#ffffff' }}
-                  activeDot={{ r: 5, fill: '#ffffff' }}
+                  dot={{ r: 2, fill: '#10b981' }}
+                  activeDot={{ r: 4, fill: '#10b981' }}
                 />
                 <Line
                   type="monotone"
                   dataKey="baseline_net_rev"
                   stroke="#64748b"
-                  strokeWidth={2}
+                  strokeWidth={1.5}
                   strokeDasharray="4 4"
                   name="baseline_net_rev"
-                  dot={{ r: 2, fill: '#64748b' }}
-                  activeDot={{ r: 4, fill: '#94a3b8' }}
+                  dot={{ r: 1.5, fill: '#64748b' }}
+                  activeDot={{ r: 3, fill: '#94a3b8' }}
                 />
               </ComposedChart>
             </ResponsiveContainer>
@@ -460,12 +438,9 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ response }) => {
         </div>
 
         {/* Footer Note */}
-        <div className="pt-3 border-t border-white/[0.06] text-[11px] text-slate-400 flex items-center justify-between font-mono">
-          <span className="flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-white" />
-            <span>perishOpt avoids catastrophic cliff drops caused by unmonitored thermal decay.</span>
-          </span>
-          <span className="text-slate-500">30 Runs Evaluated</span>
+        <div className="pt-2.5 border-t border-white/[0.06] text-[11px] text-slate-400 flex items-center justify-between font-mono">
+          <span>perishOpt preserves profitability even under harsh multi-factor disruptions.</span>
+          <span className="text-slate-500 text-[10px]">30 Runs Evaluated</span>
         </div>
       </div>
     </div>

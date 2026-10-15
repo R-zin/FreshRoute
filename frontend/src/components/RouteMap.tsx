@@ -9,16 +9,10 @@ import {
 } from 'react-leaflet';
 import { OptimizeResponse, ORIGIN_HUB } from '../types/api';
 import {
-  MapPin,
   Truck,
   Thermometer,
-  ShieldCheck,
-  AlertTriangle,
-  XCircle,
-  Package,
   Clock,
-  Layers,
-  Sparkles,
+  MapPin,
 } from 'lucide-react';
 
 export interface RouteMapProps {
@@ -104,31 +98,28 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
         discounts: Array.from(data.discounts),
       }));
 
-      // High-contrast monochrome route status
-      // Safe: Pure white (#FFFFFF)
-      // Tight / Markdown: Silver Slate (#94A3B8)
-      // Blocked: Dark muted dashed (#475569)
+      // Semantic status and clean polyline colors
       let routeStatus: 'SAFE' | 'WARNING' | 'BLOCKED' = 'BLOCKED';
-      let lineColor = '#475569';
+      let lineColor = '#f43f5e';
       let isDashed = true;
 
       if (dispatchedKg > 0 && minRslBufferHours !== null) {
-        if (minRslBufferHours >= 12.0 && markdownKg === 0) {
+        if (minRslBufferHours >= 10.0 && markdownKg === 0) {
           routeStatus = 'SAFE';
-          lineColor = '#ffffff';
+          lineColor = '#10b981'; // Emerald
           isDashed = false;
         } else if (minRslBufferHours >= 0.0) {
           routeStatus = 'WARNING';
-          lineColor = '#94a3b8';
+          lineColor = '#f59e0b'; // Amber
           isDashed = false;
         } else {
           routeStatus = 'BLOCKED';
-          lineColor = '#475569';
+          lineColor = '#f43f5e'; // Rose
           isDashed = true;
         }
       } else {
         routeStatus = 'BLOCKED';
-        lineColor = '#475569';
+        lineColor = '#64748b'; // Muted Slate
         isDashed = true;
       }
 
@@ -163,41 +154,41 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
   const blockedRoutes = marketAggregations.filter((r) => r.routeStatus === 'BLOCKED').length;
 
   return (
-    <div className="tactile-debossed rounded-2xl shadow-xl overflow-hidden flex flex-col h-full relative">
+    <div className="glass-panel rounded-2xl shadow-xl overflow-hidden flex flex-col h-full relative">
       {/* Map Header Bar */}
-      <div className="px-5 py-3.5 border-b border-white/[0.06] bg-[#111418] flex flex-wrap items-center justify-between gap-3 shrink-0">
+      <div className="px-5 py-3.5 border-b border-white/[0.06] bg-[#0c0f17]/90 flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-lg tactile-extruded flex items-center justify-center text-white shrink-0">
-            <Truck className="w-4 h-4 text-white" />
+          <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 shrink-0">
+            <Truck className="w-4 h-4" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h2 className="text-sm font-space font-bold text-white tracking-tight truncate">
-                South India Logistics Corridors
+                Cold-Chain Corridors
               </h2>
-              <span className="text-[10px] px-2 py-0.5 rounded-full tactile-debossed text-white font-mono font-medium shrink-0">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-300 font-mono">
                 Kolar Hub Origin
               </span>
             </div>
             <p className="text-[11px] text-slate-400 font-mono truncate">
-              Arrhenius Q₁₀=2.0 thermal safety margins & telemetry
+              Dynamic FEFO routing & Arrhenius decay tracking
             </p>
           </div>
         </div>
 
         {/* Route Status Summary Badges */}
         <div className="flex items-center gap-2 text-xs font-mono shrink-0">
-          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md tactile-extruded text-white">
-            <span className="w-2 h-2 rounded-full bg-white shadow-[0_0_6px_#ffffff]" />
+          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" />
             {safeRoutes} Safe
           </span>
-          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md tactile-pressed text-slate-300 border border-white/10">
-            <span className="w-2 h-2 rounded-full bg-slate-400" />
+          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
             {warningRoutes} Tight
           </span>
           {blockedRoutes > 0 && (
-            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md tactile-debossed text-slate-500">
-              <span className="w-2 h-2 rounded-full bg-slate-600" />
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
               {blockedRoutes} Blocked
             </span>
           )}
@@ -205,20 +196,21 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
       </div>
 
       {/* Map Container Area */}
-      <div className="relative w-full h-[460px] sm:h-[500px] lg:h-[540px] flex-1 bg-[#0b0e12]">
+      <div className="relative w-full h-[460px] sm:h-[500px] lg:h-[540px] flex-1 bg-[#08090d]">
         <MapContainer
           center={[13.4, 78.2]}
           zoom={6}
           scrollWheelZoom={false}
-          className="w-full h-full z-0 dark-map-container"
-          style={{ background: '#0b0e12' }}
+          className="w-full h-full z-0"
+          style={{ background: '#08090d' }}
         >
-          {/* Watermark-Free Dark Tiles via OpenStreetMap with CSS Invert Filter */}
+          {/* Pristine CartoDB Dark Matter Tiles */}
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-            className="dark-map-tiles"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png"
+            subdomains="abcd"
             maxZoom={19}
+            className="dark-map-tiles"
           />
 
           {/* =========================================================================
@@ -229,9 +221,9 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
             center={originCenter}
             radius={18}
             pathOptions={{
-              color: '#ffffff',
-              fillColor: '#ffffff',
-              fillOpacity: 0.12,
+              color: '#10b981',
+              fillColor: '#10b981',
+              fillOpacity: 0.15,
               weight: 1.5,
               dashArray: '3, 4',
             }}
@@ -240,335 +232,239 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
           {/* Inner prominent hub marker */}
           <CircleMarker
             center={originCenter}
-            radius={10}
+            radius={9}
             pathOptions={{
-              color: '#ffffff',
-              fillColor: '#111418',
+              color: '#10b981',
+              fillColor: '#0c0f17',
               fillOpacity: 0.95,
-              weight: 3,
+              weight: 2.5,
             }}
           >
             <Tooltip
               direction="top"
               offset={[0, -10]}
-              opacity={0.95}
+              opacity={1}
               permanent={false}
+              className="font-mono text-xs"
             >
-              <div className="font-sans text-xs">
-                <span className="font-bold text-white block">ORIGIN HUB</span>
-                <span>{ORIGIN_HUB.name}</span>
-              </div>
+              <div className="font-bold text-emerald-400">Hub Origin</div>
+              <div className="text-[10px] text-slate-300">{ORIGIN_HUB.name}</div>
             </Tooltip>
 
             <Popup className="custom-dark-popup">
-              <div className="p-4 w-72 text-slate-100 font-sans space-y-3">
-                <div className="flex items-start gap-2.5 border-b border-white/[0.08] pb-2.5">
-                  <div className="w-8 h-8 rounded-lg tactile-extruded flex items-center justify-center text-white shrink-0">
-                    <MapPin className="w-4 h-4 text-white" />
+              <div className="p-4 space-y-2.5 min-w-[240px]">
+                <div className="flex items-center gap-2 border-b border-white/[0.08] pb-2">
+                  <div className="w-6 h-6 rounded bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                    <MapPin className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-semibold tracking-wider uppercase text-slate-400 block font-mono">
-                      Central Packinghouse Node
-                    </span>
-                    <h4 className="text-xs font-bold text-white leading-tight font-space">
-                      {ORIGIN_HUB.name}
-                    </h4>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5 text-xs text-slate-300 font-mono">
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Node Identifier:</span>
-                    <span className="text-white font-semibold">{ORIGIN_HUB.hub_id}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Coordinates:</span>
-                    <span className="text-slate-300">{ORIGIN_HUB.lat.toFixed(4)}° N, {ORIGIN_HUB.lng.toFixed(4)}° E</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Total Produce Stock:</span>
-                    <span className="text-white font-semibold">
-                      {response.batches.reduce((s, b) => s + b.quantity_kg, 0).toLocaleString('en-IN')} kg
+                    <h3 className="text-xs font-bold font-space text-white">
+                      Central Packinghouse
+                    </h3>
+                    <span className="text-[10px] text-emerald-400 font-mono">
+                      {ORIGIN_HUB.hub_id}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Active Corridors:</span>
-                    <span className="text-white font-semibold">{marketAggregations.length} APMC Mandis</span>
-                  </div>
                 </div>
-
-                <div className="tactile-debossed p-2 rounded-lg text-[11px] text-slate-400 leading-snug">
-                  Primary aggregation facility servicing Kolar, Malur, and Chikkaballapur farm cooperatives under MoFPI cold-chain protocols.
+                <div className="text-xs text-slate-300 space-y-1 font-mono text-[11px]">
+                  <div>Location: Kolar District, Karnataka</div>
+                  <div>Target Mandis: {markets.length} APMC Markets</div>
+                  <div>Status: Primary Distribution Node</div>
                 </div>
               </div>
             </Popup>
           </CircleMarker>
 
           {/* =========================================================================
-              2. ROUTE POLYLINES & DESTINATION MARKERS
+              2. CORRIDOR ROUTE POLYLINES (Origin to Mandis)
              ========================================================================= */}
           {marketAggregations.map((route) => {
-            const destCenter: [number, number] = [route.lat, route.lng];
-            const polylinePositions: [number, number][] = [originCenter, destCenter];
+            const positions: [number, number][] = [
+              originCenter,
+              [route.lat, route.lng],
+            ];
 
             return (
-              <React.Fragment key={route.marketId}>
-                {/* Outbound Polyline Corridor */}
-                <Polyline
-                  positions={polylinePositions}
-                  pathOptions={{
-                    color: route.lineColor,
-                    weight: route.dispatchedKg > 0 ? 3.5 : 1.5,
-                    opacity: route.dispatchedKg > 0 ? 0.9 : 0.4,
-                    dashArray: route.isDashed ? '6, 6' : undefined,
-                  }}
+              <Polyline
+                key={`line-${route.marketId}`}
+                positions={positions}
+                pathOptions={{
+                  color: route.lineColor,
+                  weight: route.routeStatus === 'SAFE' ? 3.5 : 2.5,
+                  opacity: route.routeStatus === 'SAFE' ? 0.9 : 0.8,
+                  dashArray: route.isDashed ? '6, 6' : undefined,
+                }}
+              />
+            );
+          })}
+
+          {/* =========================================================================
+              3. DESTINATION MARKET APMC MARKERS
+             ========================================================================= */}
+          {marketAggregations.map((m) => {
+            const isSafe = m.routeStatus === 'SAFE';
+            const isWarning = m.routeStatus === 'WARNING';
+            const markerColor = isSafe
+              ? '#10b981'
+              : isWarning
+              ? '#f59e0b'
+              : '#f43f5e';
+
+            return (
+              <CircleMarker
+                key={`marker-${m.marketId}`}
+                center={[m.lat, m.lng]}
+                radius={8}
+                pathOptions={{
+                  color: markerColor,
+                  fillColor: '#0c0f17',
+                  fillOpacity: 0.95,
+                  weight: 2.5,
+                }}
+              >
+                {/* Clean Hover Tooltip */}
+                <Tooltip
+                  direction="top"
+                  offset={[0, -10]}
+                  opacity={1}
+                  className="font-mono"
                 >
-                  <Tooltip
-                    direction="center"
-                    offset={[0, 0]}
-                    opacity={0.9}
-                    sticky
-                  >
-                    <div className="font-sans text-xs space-y-0.5">
-                      <div className="font-bold text-white flex items-center gap-1.5 font-space">
-                        <span
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: route.lineColor }}
-                        />
-                        <span>{ORIGIN_HUB.hub_id} → {route.marketName}</span>
-                      </div>
-                      <div className="text-[11px] text-slate-300 font-mono">
-                        {route.dispatchedKg > 0
-                          ? `${route.dispatchedKg.toLocaleString('en-IN')} kg • Min Buffer: ${route.minRslBufferHours?.toFixed(1)}h`
-                          : 'No Feasible Shipment (Thermal/Capacity Limit)'}
-                      </div>
-                    </div>
-                  </Tooltip>
-                </Polyline>
+                  <div className="font-bold text-white">{m.marketName}</div>
+                  <div className="text-[10px] text-slate-300">
+                    {m.dispatchedKg.toLocaleString('en-IN')} kg dispatched
+                    {m.markdownKg > 0 && ` (${m.markdownKg.toLocaleString('en-IN')} kg discounted)`}
+                  </div>
+                </Tooltip>
 
-                {/* Destination Market Outer Halo */}
-                <CircleMarker
-                  center={destCenter}
-                  radius={route.dispatchedKg > 0 ? 14 : 9}
-                  pathOptions={{
-                    color: route.lineColor,
-                    fillColor: route.lineColor,
-                    fillOpacity: 0.12,
-                    weight: 1.5,
-                  }}
-                />
-
-                {/* Destination Market Inner Marker */}
-                <CircleMarker
-                  center={destCenter}
-                  radius={route.dispatchedKg > 0 ? 8 : 5}
-                  pathOptions={{
-                    color: '#ffffff',
-                    fillColor: route.lineColor,
-                    fillOpacity: 0.95,
-                    weight: 2,
-                  }}
-                >
-                  <Tooltip
-                    direction="top"
-                    offset={[0, -8]}
-                    opacity={0.95}
-                    permanent={false}
-                  >
-                    <div className="font-sans text-xs">
-                      <span className="font-bold text-white block">{route.marketName}</span>
-                      <span className="text-[10px] text-slate-300 font-mono">
-                        {route.dispatchedKg.toLocaleString('en-IN')} kg ({route.capacityUtilizationPct.toFixed(0)}% cap)
-                      </span>
-                    </div>
-                  </Tooltip>
-
-                  {/* Clean Rich Popup */}
-                  <Popup className="custom-dark-popup">
-                    <div className="p-4 w-80 text-slate-100 font-sans space-y-3.5">
-                      {/* Popup Header */}
-                      <div className="flex items-start justify-between border-b border-white/[0.08] pb-3 gap-2">
-                        <div>
-                          <span className="text-[10px] font-semibold tracking-wider uppercase text-slate-400 block font-mono">
-                            APMC Wholesale • {route.marketId}
-                          </span>
-                          <h4 className="text-sm font-bold text-white leading-tight mt-0.5 font-space">
-                            {route.marketName}
-                          </h4>
-                        </div>
-                        <span
-                          className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded uppercase shrink-0 ${
-                            route.routeStatus === 'SAFE'
-                              ? 'tactile-extruded text-white'
-                              : route.routeStatus === 'WARNING'
-                              ? 'tactile-pressed text-slate-300'
-                              : 'tactile-debossed text-slate-500'
-                          }`}
-                        >
-                          {route.routeStatus === 'SAFE'
-                            ? 'Optimal Buffer'
-                            : route.routeStatus === 'WARNING'
-                            ? 'Margin Rescue'
-                            : 'Infeasible'}
+                {/* Rich Minimalist Popup Details */}
+                <Popup className="custom-dark-popup">
+                  <div className="p-4 space-y-3 min-w-[260px]">
+                    {/* Header */}
+                    <div className="flex items-center justify-between border-b border-white/[0.08] pb-2">
+                      <div>
+                        <h4 className="text-xs font-bold font-space text-white">
+                          {m.marketName}
+                        </h4>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          ID: {m.marketId}
                         </span>
                       </div>
+                      <span
+                        className={`text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
+                          isSafe
+                            ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                            : isWarning
+                            ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                            : 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
+                        }`}
+                      >
+                        {m.routeStatus}
+                      </span>
+                    </div>
 
-                      {/* Transit & Reefer Conditions Grid */}
-                      <div className="grid grid-cols-2 gap-2 text-xs">
-                        <div className="tactile-debossed p-2 rounded-lg">
-                          <div className="flex items-center gap-1.5 text-slate-400 mb-0.5">
-                            <Clock className="w-3.5 h-3.5 text-white" />
-                            <span className="text-[10px] font-mono uppercase tracking-wider">Transit Time</span>
-                          </div>
-                          <div className="font-mono text-sm font-bold text-white">
-                            {route.effectiveTransitHours.toFixed(1)} hrs
-                          </div>
-                          <div className="text-[10px] text-slate-500 font-mono">
-                            Base: {route.transitHours}h {disruptions.highway_delay_hours > 0 && `(+${disruptions.highway_delay_hours}h)`}
-                          </div>
-                        </div>
-
-                        <div className="tactile-debossed p-2 rounded-lg">
-                          <div className="flex items-center gap-1.5 text-slate-400 mb-0.5">
-                            <Thermometer className="w-3.5 h-3.5 text-white" />
-                            <span className="text-[10px] font-mono uppercase tracking-wider">Reefer Temp</span>
-                          </div>
-                          <div className="font-mono text-sm font-bold text-white">
-                            {route.effectiveTransitTempC.toFixed(1)}°C
-                          </div>
-                          <div className="text-[10px] text-slate-500 font-mono">
-                            Base: {route.transitTempC}°C {disruptions.reefer_temp_spike_c > 0 && `(+${disruptions.reefer_temp_spike_c}°C)`}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Capacity Utilization Bar */}
-                      <div className="space-y-1.5">
-                        <div className="flex items-center justify-between text-xs font-mono">
-                          <span className="text-slate-400 flex items-center gap-1">
-                            <Layers className="w-3.5 h-3.5 text-slate-400" />
-                            Capacity:
-                          </span>
-                          <span className="font-bold text-white">
-                            {route.dispatchedKg.toLocaleString('en-IN')} / {route.maxCapacityKg.toLocaleString('en-IN')} kg
-                            <span className="text-slate-400 font-normal ml-1">
-                              ({route.capacityUtilizationPct.toFixed(1)}%)
-                            </span>
-                          </span>
-                        </div>
-                        <div className="w-full tactile-slider-track rounded-full h-2 overflow-hidden">
-                          <div
-                            className="bg-white h-full rounded-full transition-all duration-300 shadow-[0_0_8px_rgba(255,255,255,0.4)]"
-                            style={{
-                              width: `${Math.min(100, Math.max(0, route.capacityUtilizationPct))}%`,
-                            }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Thermal Buffer Margin Callout */}
-                      <div className="tactile-debossed p-2.5 rounded-lg flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-2">
-                          {route.routeStatus === 'SAFE' ? (
-                            <ShieldCheck className="w-4 h-4 text-white" />
-                          ) : route.routeStatus === 'WARNING' ? (
-                            <AlertTriangle className="w-4 h-4 text-slate-300" />
-                          ) : (
-                            <XCircle className="w-4 h-4 text-slate-500" />
-                          )}
-                          <span className="text-slate-300 text-[11px] font-mono">
-                            {route.minRslBufferHours !== null
-                              ? `Min Thermal Buffer: ${route.minRslBufferHours.toFixed(1)}h`
-                              : 'No viable thermal corridor'}
-                          </span>
-                        </div>
-                        {route.markdownKg > 0 && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-white tactile-extruded px-2 py-0.5 rounded">
-                            <Sparkles className="w-3 h-3 text-white" />
-                            {route.markdownKg.toLocaleString('en-IN')} kg disc.
+                    {/* Telemetry Metrics */}
+                    <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
+                      <div className="bg-white/[0.03] p-2 rounded-lg border border-white/[0.05]">
+                        <span className="text-slate-400 flex items-center gap-1 text-[10px]">
+                          <Clock className="w-3 h-3 text-slate-400" /> Transit
+                        </span>
+                        <span className="font-bold text-white">
+                          {m.effectiveTransitHours.toFixed(1)}h
+                        </span>
+                        {disruptions.highway_delay_hours > 0 && (
+                          <span className="text-[9px] text-amber-400 block">
+                            (+{disruptions.highway_delay_hours}h delay)
                           </span>
                         )}
                       </div>
 
-                      {/* Commodity Breakdown */}
-                      <div className="space-y-1.5 pt-1 border-t border-white/[0.08]">
-                        <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 flex items-center justify-between font-mono">
-                          <span>Delivered Produce Breakdown</span>
-                          <Package className="w-3.5 h-3.5 text-slate-500" />
-                        </div>
-
-                        {route.commodities.length > 0 ? (
-                          <div className="space-y-1 max-h-32 overflow-y-auto pr-1">
-                            {route.commodities.map((c) => (
-                              <div
-                                key={c.commodity}
-                                className="flex items-center justify-between text-xs py-1 px-2 rounded tactile-debossed"
-                              >
-                                <span className="text-white font-medium">{c.commodity}</span>
-                                <div className="flex items-center gap-2">
-                                  {c.discounts.length > 0 && (
-                                    <span className="text-[10px] text-white font-mono tactile-extruded px-1.5 py-0.2 rounded">
-                                      {c.discounts.map((d) => `-${d}%`).join(', ')}
-                                    </span>
-                                  )}
-                                  <span className="font-mono text-white font-semibold">
-                                    {c.quantityKg.toLocaleString('en-IN')} kg
-                                  </span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="text-[11px] text-slate-500 italic py-1 text-center tactile-debossed rounded">
-                            No allocations to this market under current disruption constraints.
-                          </div>
+                      <div className="bg-white/[0.03] p-2 rounded-lg border border-white/[0.05]">
+                        <span className="text-slate-400 flex items-center gap-1 text-[10px]">
+                          <Thermometer className="w-3 h-3 text-amber-400" /> Reefer
+                        </span>
+                        <span className="font-bold text-white">
+                          {m.effectiveTransitTempC.toFixed(1)}°C
+                        </span>
+                        {disruptions.reefer_temp_spike_c > 0 && (
+                          <span className="text-[9px] text-amber-400 block">
+                            (+{disruptions.reefer_temp_spike_c}°C spike)
+                          </span>
                         )}
                       </div>
                     </div>
-                  </Popup>
-                </CircleMarker>
-              </React.Fragment>
+
+                    {/* Dispatched Volume & Capacity */}
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-[11px] font-mono">
+                        <span className="text-slate-400">Corridor Capacity</span>
+                        <span className="text-white font-semibold">
+                          {m.capacityUtilizationPct.toFixed(0)}%
+                        </span>
+                      </div>
+                      <div className="w-full bg-white/[0.05] rounded-full h-1.5 overflow-hidden">
+                        <div
+                          className="bg-emerald-400 h-full rounded-full transition-all"
+                          style={{
+                            width: `${Math.min(100, Math.max(0, m.capacityUtilizationPct))}%`,
+                          }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-[10px] font-mono text-slate-400">
+                        <span>{m.dispatchedKg.toLocaleString('en-IN')} kg sent</span>
+                        <span>{m.maxCapacityKg.toLocaleString('en-IN')} kg cap</span>
+                      </div>
+                    </div>
+
+                    {/* Thermal Shelf Life RSL Buffer */}
+                    <div className="bg-white/[0.03] p-2 rounded-lg border border-white/[0.05] flex items-center justify-between text-[11px] font-mono">
+                      <span className="text-slate-400">Min RSL Buffer</span>
+                      <span
+                        className={`font-bold ${
+                          (m.minRslBufferHours ?? 0) >= 5
+                            ? 'text-emerald-400'
+                            : (m.minRslBufferHours ?? 0) >= 0
+                            ? 'text-amber-400'
+                            : 'text-rose-400'
+                        }`}
+                      >
+                        {m.minRslBufferHours !== null
+                          ? `+${m.minRslBufferHours.toFixed(1)}h`
+                          : 'No Dispatch'}
+                      </span>
+                    </div>
+
+                    {/* Produce Commodity Breakdown */}
+                    {m.commodities.length > 0 && (
+                      <div className="space-y-1 pt-1 border-t border-white/[0.06]">
+                        <span className="text-[10px] text-slate-400 uppercase font-mono block">
+                          Allocated Batches
+                        </span>
+                        <div className="space-y-1 max-h-24 overflow-y-auto pr-1">
+                          {m.commodities.map((c) => (
+                            <div
+                              key={c.commodity}
+                              className="flex items-center justify-between text-[10px] font-mono bg-white/[0.02] p-1.5 rounded"
+                            >
+                              <span className="text-slate-200">{c.commodity}</span>
+                              <span className="text-white font-semibold">
+                                {c.quantityKg.toLocaleString('en-IN')} kg
+                                {c.markdownKg > 0 && (
+                                  <span className="text-amber-400 ml-1">
+                                    (-{Array.from(c.discounts).join(',')}% off)
+                                  </span>
+                                )}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </Popup>
+              </CircleMarker>
             );
           })}
         </MapContainer>
-
-        {/* Floating Interactive Map Legend */}
-        <div className="absolute bottom-4 right-4 z-10 tactile-debossed bg-[#111418]/95 backdrop-blur-md rounded-xl p-3 shadow-2xl text-xs max-w-[240px] space-y-2 pointer-events-auto border border-white/[0.08]">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between pb-1 border-b border-white/[0.06] font-mono">
-            <span>Corridor Legend</span>
-            <span className="text-slate-500 text-[9px]">Q₁₀ Arrhenius</span>
-          </div>
-
-          <div className="space-y-1.5 text-[11px]">
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-1 rounded-full bg-white shadow-[0_0_6px_#ffffff] shrink-0" />
-              <span className="text-slate-300">
-                Safe Buffer (<strong className="text-white font-mono">≥ 12h</strong>)
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-1 rounded-full bg-slate-400 shrink-0" />
-              <span className="text-slate-300">
-                Tight (<strong className="text-slate-200 font-mono">0–12h</strong> / Markdown)
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-1 border-b-2 border-dashed border-slate-600 shrink-0" />
-              <span className="text-slate-400">
-                Blocked (Decay / Deficit)
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2 pt-1 border-t border-white/[0.06]">
-              <span className="w-2.5 h-2.5 rounded-full bg-white ring-2 ring-slate-700 shrink-0" />
-              <span className="text-slate-300 font-medium">
-                Origin Hub (Kolar)
-              </span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -8,141 +8,213 @@
   }
   
   body {
-    background-color: #0b0d0f;
-    color: #e1e2e8;
+    background-color: #08090d;
+    color: #e2e8f0;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    selection-background-color: #ffffff;
-    selection-color: #000000;
+    selection-background-color: #10b981;
+    selection-color: #ffffff;
   }
 }
 
 /* =========================================================================
-   STITCH NEUMORPHIC MINIMALIST TACTILE CLASSES
+   CLEAN MINIMALIST GLASS & CARD SURFACES
    ========================================================================= */
 
+/* Elevated Modern Card */
+.glass-panel {
+  background: rgba(15, 18, 25, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.5);
+}
+
+.glass-card {
+  background: rgba(18, 22, 34, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  background: rgba(22, 27, 42, 0.9);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+/* Clean, Sleek Backwards-Compatible Tactile Overrides (Flat & Minimalist) */
 .tactile-extruded {
-  background: #181d22;
-  box-shadow: -3px -3px 7px rgba(255, 255, 255, 0.05), 4px 4px 10px rgba(0, 0, 0, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: #131722;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: all 0.15s ease;
 }
 
 .tactile-extruded:hover {
-  box-shadow: -4px -4px 9px rgba(255, 255, 255, 0.08), 5px 5px 14px rgba(0, 0, 0, 0.9);
-  border-color: rgba(255, 255, 255, 0.09);
+  background: #181e2c;
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
 .tactile-extruded:active,
 .tactile-pressed {
-  background: #121519 !important;
-  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.95), inset -2px -2px 5px rgba(255, 255, 255, 0.04) !important;
-  border-color: rgba(255, 255, 255, 0.02) !important;
-  transform: translateY(1px);
+  background: #0d1017 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6) !important;
 }
 
 .tactile-debossed {
-  background: #0e1115;
-  box-shadow: inset 3px 3px 7px rgba(0, 0, 0, 0.9), inset -2px -2px 6px rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  background: #0e1118;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .tactile-slider-track {
-  background: #0a0c0f;
-  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.95), inset -1px -1px 3px rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.02);
+  background: #090b10;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+/* =========================================================================
+   SLEEK MODERN RANGE SLIDER
+   ========================================================================= */
 
 .custom-range-slider {
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
   width: 100%;
+  cursor: pointer;
+  height: 20px;
+}
+
+.custom-range-slider:focus {
+  outline: none;
+}
+
+.custom-range-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  background: #151926;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.2s ease;
+}
+
+.custom-range-slider:hover::-webkit-slider-runnable-track {
+  background: #1a2030;
 }
 
 .custom-range-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #ffffff;
-  cursor: pointer;
-  box-shadow: -2px -2px 5px rgba(255, 255, 255, 0.4), 2px 2px 6px rgba(0, 0, 0, 0.9);
-  border: 2px solid #181d22;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: grab;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6), 0 0 0 2px #0f1219;
+  border: none;
+  margin-top: -5px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
 .custom-range-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.15);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+  transform: scale(1.2);
+  background: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5), 0 0 0 2px #0f1219;
+}
+
+.custom-range-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+.custom-range-slider::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  background: #151926;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .custom-range-slider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #ffffff;
-  cursor: pointer;
-  box-shadow: -2px -2px 5px rgba(255, 255, 255, 0.4), 2px 2px 6px rgba(0, 0, 0, 0.9);
-  border: 2px solid #181d22;
+  cursor: grab;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  border: 2px solid #0f1219;
+  transition: transform 0.15s ease;
 }
 
-/* Pulsing LED glow */
-@keyframes pulse-subtle {
+.custom-range-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  background: #38bdf8;
+}
+
+/* =========================================================================
+   PULSING LED & INDICATORS
+   ========================================================================= */
+
+@keyframes pulse-emerald {
   0%, 100% {
     opacity: 1;
-    transform: scale(1);
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
   }
   50% {
-    opacity: 0.35;
-    transform: scale(0.85);
+    opacity: 0.4;
+    box-shadow: 0 0 2px rgba(16, 185, 129, 0.2);
   }
 }
 
 .pulsing-indicator {
-  animation: pulse-subtle 2s infinite ease-in-out;
+  animation: pulse-emerald 2s infinite ease-in-out;
 }
 
 /* Custom Minimalist Dark Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0c0e12;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #272a2e;
-  border-radius: 3px;
+  background: #232938;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #444748;
+  background: #333c52;
 }
 
-/* Leaflet Container Default Styling */
+/* =========================================================================
+   LEAFLET MAP MINIMALIST DARK THEME
+   ========================================================================= */
+
 .leaflet-container {
   width: 100%;
   height: 100%;
-  background-color: #0b0e12 !important;
+  background-color: #08090d !important;
   font-family: inherit;
 }
 
-/* Inverted Dark-mode Map Tiles for Watermark-free OpenStreetMap */
-.dark-map-container .leaflet-tile {
-  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.2) brightness(0.7);
+/* Clean Dark Matter Tiles */
+.dark-map-tiles {
+  filter: brightness(0.85) contrast(1.1);
 }
 
-/* Leaflet Dark Neumorphic Overrides */
 .leaflet-popup-content-wrapper {
-  background: #15191f !important;
-  color: #f8fafc !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 1rem !important;
-  box-shadow: -3px -3px 7px rgba(255, 255, 255, 0.05), 4px 4px 14px rgba(0, 0, 0, 0.9) !important;
+  background: rgba(15, 18, 25, 0.95) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  color: #f1f5f9 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 0.875rem !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7) !important;
   padding: 0 !important;
   overflow: hidden;
 }
@@ -153,9 +225,9 @@
 }
 
 .leaflet-popup-tip {
-  background: #15191f !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: #0f1219 !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .leaflet-popup-close-button {
@@ -167,33 +239,34 @@
 
 .leaflet-popup-close-button:hover {
   color: #ffffff !important;
-  background: #272a2e !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   border-radius: 9999px !important;
 }
 
 .leaflet-tooltip {
-  background: #15191f !important;
+  background: rgba(15, 18, 25, 0.9) !important;
+  backdrop-filter: blur(8px) !important;
   color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
   border-radius: 0.5rem !important;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
   padding: 4px 8px !important;
   font-size: 11px !important;
   font-weight: 500 !important;
 }
 
 .leaflet-tooltip-top:before {
-  border-top-color: #15191f !important;
+  border-top-color: #0f1219 !important;
 }
 
 .leaflet-tooltip-bottom:before {
-  border-bottom-color: #15191f !important;
+  border-bottom-color: #0f1219 !important;
 }
 
 .leaflet-tooltip-left:before {
-  border-left-color: #15191f !important;
+  border-left-color: #0f1219 !important;
 }
 
 .leaflet-tooltip-right:before {
-  border-right-color: #15191f !important;
+  border-right-color: #0f1219 !important;
 }
