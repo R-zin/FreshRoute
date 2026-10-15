@@ -1,4 +1,4 @@
-# perishOpt (Problem Statement 03)
+# perishOpt 
 ### Physics-Informed Dynamic Perishable Produce Cold-Chain & Markdown Optimization Engine
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110.0-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
