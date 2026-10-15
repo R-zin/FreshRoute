@@ -153,6 +153,21 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
   const warningRoutes = marketAggregations.filter((r) => r.routeStatus === 'WARNING').length;
   const blockedRoutes = marketAggregations.filter((r) => r.routeStatus === 'BLOCKED').length;
 
+  // Basemap Tile Layer configuration:
+  // CartoDB enforces an API key requirement on basemaps.cartocdn.com (otherwise tiles display
+  // an "API KEY REQUIRED" watermark). If VITE_CARTO_API_KEY is configured (in .env or Vercel
+  // environment variables), we request authenticated CARTO Dark Matter tiles.
+  // Otherwise, we gracefully fall back to free OpenStreetMap tiles with a sleek dark CSS filter.
+  const cartoApiKey = import.meta.env.VITE_CARTO_API_KEY?.trim();
+  const tileUrl = cartoApiKey
+    ? `https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png?key=${cartoApiKey}`
+    : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  const tileAttribution = cartoApiKey
+    ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+  const tileClassName = cartoApiKey ? 'dark-map-tiles' : 'osm-dark-tiles';
+  const tileSubdomains = cartoApiKey ? 'abcd' : 'abc';
+
   return (
     <div className="glass-panel rounded-2xl shadow-xl overflow-hidden flex flex-col h-full relative">
       {/* Map Header Bar */}
@@ -204,13 +219,14 @@ export const RouteMap: React.FC<RouteMapProps> = ({ response }) => {
           className="w-full h-full z-0"
           style={{ background: '#08090d' }}
         >
-          {/* Pristine CartoDB Dark Matter Tiles */}
+          {/* Basemap Tiles: CARTO Dark Matter (if VITE_CARTO_API_KEY provided) or free Dark-Themed OpenStreetMap */}
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png"
-            subdomains="abcd"
+            key={cartoApiKey ? 'carto' : 'osm'}
+            attribution={tileAttribution}
+            url={tileUrl}
+            subdomains={tileSubdomains}
             maxZoom={19}
-            className="dark-map-tiles"
+            className={tileClassName}
           />
 
           {/* =========================================================================

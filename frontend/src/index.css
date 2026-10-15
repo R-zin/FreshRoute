@@ -207,6 +207,11 @@
   filter: brightness(0.85) contrast(1.1);
 }
 
+/* Free OpenStreetMap Dark Mode filter (used when no CARTO API key is configured) */
+.osm-dark-tiles {
+  filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(110%);
+}
+
 .leaflet-popup-content-wrapper {
   background: rgba(15, 18, 25, 0.95) !important;
   backdrop-filter: blur(12px) !important;
